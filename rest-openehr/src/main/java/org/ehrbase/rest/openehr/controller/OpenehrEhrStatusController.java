@@ -20,7 +20,6 @@ package org.ehrbase.rest.openehr.controller;
 
 import com.nedap.archie.rm.changecontrol.OriginalVersion;
 import com.nedap.archie.rm.ehr.EhrStatus;
-import com.nedap.archie.rm.support.identification.ObjectVersionId;
 import io.swagger.annotations.*;
 import org.apache.commons.lang3.StringUtils;
 import org.ehrbase.api.exception.InternalServerException;
@@ -28,7 +27,6 @@ import org.ehrbase.api.exception.InvalidApiParameterException;
 import org.ehrbase.api.exception.ObjectNotFoundException;
 import org.ehrbase.api.exception.PreconditionFailedException;
 import org.ehrbase.api.service.EhrService;
-import org.ehrbase.rest.openehr.response.EhrStatusResponseData;
 import org.ehrbase.rest.openehr.response.InternalResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -59,7 +57,7 @@ public class OpenehrEhrStatusController extends BaseController {
     }
 
     @GetMapping
-    @ApiOperation(value = "Retrieves the version of the EHR_STATUS associated with the EHR identified by ehr_id. If version_at_time is supplied, retrieves the version extant at specified time, otherwise retrieves the latest EHR_STATUS version.", response = EhrStatusResponseData.class)
+    @ApiOperation(value = "Retrieves the version of the EHR_STATUS associated with the EHR identified by ehr_id. If version_at_time is supplied, retrieves the version extant at specified time, otherwise retrieves the latest EHR_STATUS version.", response = EhrStatus.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Ok - requested EHR_STATUS resource is successfully retrieved.",
                     responseHeaders = {
@@ -71,7 +69,7 @@ public class OpenehrEhrStatusController extends BaseController {
             @ApiResponse(code = 400, message = "Bad Request - the request has invalid content such as an invalid version_at_time format."),
             @ApiResponse(code = 404, message = "Not Found - EHR with ehr_id does not exist or a version of an EHR_STATUS resource does not exist at the specified version_at_time."),
             @ApiResponse(code = 406, message = "Not Acceptable - Service can not fulfil requested Accept format.")})
-    public ResponseEntity<EhrStatusResponseData> retrieveEhrStatusByTime(
+    public ResponseEntity<EhrStatus> retrieveEhrStatusByTime(
             @ApiParam(value = REQ_ACCEPT) @RequestHeader(value = HttpHeaders.ACCEPT, required = false) String accept,
             @ApiParam(value = "User supplied EHR ID", required = true) @PathVariable(value = "ehr_id") String ehrIdString,
             @ApiParam(value = "Timestamp in the extended ISO8601 format, e.g. 2015-01-20T19:30:22.765+01:00") @RequestParam(value = "version_at_time", required = false) String versionAtTime) {
@@ -93,7 +91,7 @@ public class OpenehrEhrStatusController extends BaseController {
     }
 
     @GetMapping(path = "/{version_uid}")
-    @ApiOperation(value = "Retrieves a particular version of the EHR_STATUS identified by version_uid and associated with the EHR identified by ehr_id.", response = EhrStatusResponseData.class)
+    @ApiOperation(value = "Retrieves a particular version of the EHR_STATUS identified by version_uid and associated with the EHR identified by ehr_id.", response = EhrStatus.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Ok - requested EHR_STATUS is successfully retrieved.",
                     responseHeaders = {
@@ -104,7 +102,7 @@ public class OpenehrEhrStatusController extends BaseController {
                     }),
             @ApiResponse(code = 404, message = "Not Found - EHR with ehr_id does not exist or when an EHR_STATUS with version_uid does not exist."),
             @ApiResponse(code = 406, message = "Not Acceptable - Service can not fulfil requested Accept format.")})
-    public ResponseEntity<EhrStatusResponseData> retrieveEhrStatusById(
+    public ResponseEntity<EhrStatus> retrieveEhrStatusById(
             @ApiParam(value = "Client should specify expected response format") @RequestHeader(value = HttpHeaders.ACCEPT, required = false) String accept,
             @ApiParam(value = "User supplied EHR ID", required = true) @PathVariable(value = "ehr_id") String ehrIdString,
             @ApiParam(value = "User supplied version UID of EHR_STATUS", required = true) @PathVariable(value = "version_uid") String versionUid) {
@@ -125,10 +123,10 @@ public class OpenehrEhrStatusController extends BaseController {
         return internalGetEhrStatusProcessing(accept, ehrId, ehrStatusId, version);
     }
 
-    private ResponseEntity<EhrStatusResponseData> internalGetEhrStatusProcessing(String accept, UUID ehrId, UUID ehrStatusId, int version) {
+    private ResponseEntity<EhrStatus> internalGetEhrStatusProcessing(String accept, UUID ehrId, UUID ehrStatusId, int version) {
         List<String> headerList = Arrays.asList(CONTENT_TYPE, LOCATION, ETAG, LAST_MODIFIED);   // whatever is required by REST spec
 
-        Optional<InternalResponse<EhrStatusResponseData>> respData = buildEhrStatusResponseData(EhrStatusResponseData::new, ehrId, ehrStatusId, version, accept, headerList);
+        Optional<InternalResponse<EhrStatus>> respData = buildEhrStatus(EhrStatus::new, ehrId, ehrStatusId, version, accept, headerList);
 
         return respData.map(i -> ResponseEntity.ok().headers(i.getHeaders()).body(i.getResponseData()))
                 .orElse(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
@@ -150,7 +148,7 @@ public class OpenehrEhrStatusController extends BaseController {
             @ApiResponse(code = 404, message = "Not Found - EHR with ehr_id does not exist."),
             @ApiResponse(code = 412, message = "Precondition Failed - If-Match request header doesn’t match the latest version on the service side. Returns also latest version_uid in the Location and ETag headers."),
             @ApiResponse(code = 406, message = "Not Acceptable - Service can not fulfil requested Accept format.")})
-    public ResponseEntity<EhrStatusResponseData> updateEhrStatus(
+    public ResponseEntity<EhrStatus> updateEhrStatus(
             @ApiParam(value = REQ_ACCEPT) @RequestHeader(value = HttpHeaders.ACCEPT, required = false) String accept,
             @ApiParam(value = REQ_CONTENT_TYPE_BODY) @RequestHeader(value = HttpHeaders.CONTENT_TYPE, required = false) String contentType,
             @ApiParam(value = REQ_PREFER) @RequestHeader(value = PREFER, required = false) String prefer,
@@ -180,11 +178,11 @@ public class OpenehrEhrStatusController extends BaseController {
         int version = Integer.parseInt(split[split.length-1]) + 1;
 
         List<String> headerList = Arrays.asList(CONTENT_TYPE, LOCATION, ETAG, LAST_MODIFIED);   // whatever is required by REST spec
-        Optional<InternalResponse<EhrStatusResponseData>> respData;   // variable to overload with more specific object if requested
+        Optional<InternalResponse<EhrStatus>> respData;   // variable to overload with more specific object if requested
         if (Optional.ofNullable(prefer).map(i -> i.equals(RETURN_REPRESENTATION)).orElse(false)) {      // null safe way to test prefer header
-            respData = buildEhrStatusResponseData(EhrStatusResponseData::new, ehrId, UUID.fromString(status.getUid().getRoot().getValue()), version, accept, headerList);
+            respData = buildEhrStatus(EhrStatus::new, ehrId, UUID.fromString(status.getUid().getRoot().getValue()), version, accept, headerList);
         } else {    // "minimal" is default fallback
-            respData = buildEhrStatusResponseData(EhrStatusResponseData::new, ehrId, UUID.fromString(status.getUid().getRoot().getValue()), version, accept, headerList);
+            respData = buildEhrStatus(null, ehrId, UUID.fromString(status.getUid().getRoot().getValue()), version, accept, headerList);
         }
 
         return respData.map(i -> ResponseEntity.ok().headers(i.getHeaders()).body(i.getResponseData()))
@@ -200,11 +198,11 @@ public class OpenehrEhrStatusController extends BaseController {
      * @param version       EhrStatus version number
      * @param accept        Requested content format
      * @param headerList    Requested headers that need to be set
-     * @param <T>           Either only header response or specific class EhrStatusResponseData
+     * @param <T>           Either only header response or specific class EhrStatus
      * @return
      */
-    private <T extends EhrStatusResponseData> Optional<InternalResponse<T>> buildEhrStatusResponseData(Supplier<T> factory, UUID ehrId, UUID ehrStatusId, int version, String accept, List<String> headerList) {
-        // create either EhrStatusResponseData or null (means no body, only headers incl. link to resource), via lambda request
+    private <T extends EhrStatus> Optional<InternalResponse<T>> buildEhrStatus(Supplier<T> factory, UUID ehrId, UUID ehrStatusId, int version, String accept, List<String> headerList) {
+        // create either EhrStatus or null (means no body, only headers incl. link to resource), via lambda request
         T minimalOrRepresentation = factory.get();
 
         // check for valid format header to produce content accordingly
@@ -227,17 +225,17 @@ public class OpenehrEhrStatusController extends BaseController {
 
         if (minimalOrRepresentation != null) {
             // when this "if" is true the following casting can be executed and data manipulated by reference (handled by temporary variable)
-            EhrStatusResponseData objByReference = (EhrStatusResponseData) minimalOrRepresentation;
+            EhrStatus objByReference = (EhrStatus) minimalOrRepresentation;
 
-            Optional<OriginalVersion<EhrStatus>> ehrStatus = ehrService.getEhrStatusAtVersion(ehrId, ehrStatusId, version);
-            if (ehrStatus.isPresent()) {
-                objByReference.setArchetypeNodeId(ehrStatus.get().getData().getArchetypeNodeId());
-                objByReference.setName(ehrStatus.get().getData().getName());
-                objByReference.setUid(ehrStatus.get().getUid());
-                objByReference.setSubject(ehrStatus.get().getData().getSubject());
-                objByReference.setOtherDetails(ehrStatus.get().getData().getOtherDetails());
-                objByReference.setModifiable(ehrStatus.get().getData().isModifiable());
-                objByReference.setQueryable(ehrStatus.get().getData().isQueryable());
+            Optional<OriginalVersion<EhrStatus>> ehrStatusVersion = ehrService.getEhrStatusAtVersion(ehrId, ehrStatusId, version);
+            if (ehrStatusVersion.isPresent()) {
+                objByReference.setArchetypeNodeId(ehrStatusVersion.get().getData().getArchetypeNodeId());
+                objByReference.setName(ehrStatusVersion.get().getData().getName());
+                objByReference.setUid(ehrStatusVersion.get().getUid());
+                objByReference.setSubject(ehrStatusVersion.get().getData().getSubject());
+                objByReference.setOtherDetails(ehrStatusVersion.get().getData().getOtherDetails());
+                objByReference.setModifiable(ehrStatusVersion.get().getData().isModifiable());
+                objByReference.setQueryable(ehrStatusVersion.get().getData().isQueryable());
             } else {
                 return Optional.empty();
             }

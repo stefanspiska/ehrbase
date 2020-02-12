@@ -77,7 +77,7 @@ public class OpenehrEhrController extends BaseController {
     @ResponseStatus(value = HttpStatus.CREATED)
     // overwrites default 200, fixes the wrong listing of 200 in swagger-ui (EHR-56)
     // TODO auditing headers (openehr*) ignored until auditing is implemented
-    public ResponseEntity createEhr(@ApiParam(value = REQ_OPENEHR_VERSION) @RequestHeader(value = "openEHR-VERSION", required = false) String openehrVersion,
+    public ResponseEntity<EhrResponseData> createEhr(@ApiParam(value = REQ_OPENEHR_VERSION) @RequestHeader(value = "openEHR-VERSION", required = false) String openehrVersion,
                                     @ApiParam(value = REQ_OPENEHR_AUDIT) @RequestHeader(value = "openEHR-AUDIT_DETAILS", required = false) String openehrAuditDetails,
                                     @ApiParam(value = REQ_CONTENT_TYPE_BODY) @RequestHeader(value = CONTENT_TYPE, required = false) String contentType,    // TODO when working on EHR_STATUS
                                     @ApiParam(value = "Client should specify expected response format") @RequestHeader(value = HttpHeaders.ACCEPT, required = false) String accept,
