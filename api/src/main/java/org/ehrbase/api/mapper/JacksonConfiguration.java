@@ -18,13 +18,12 @@
 
 package org.ehrbase.api.mapper;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import org.ehrbase.api.definitions.StructuredString;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.nedap.archie.rm.RMObject;
-import com.nedap.archie.rm.directory.Folder;
-import com.nedap.archie.rm.ehr.EhrStatus;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,8 +39,7 @@ public class JacksonConfiguration {
         return jacksonObjectMapperBuilder -> jacksonObjectMapperBuilder
                 .serializerByType(StructuredString.class, new StructuredStringJSonSerializer())
                 .serializerByType(RMObject.class, new RmObjektJsonSerializer())
-                .deserializerByType(EhrStatus.class, new RmObjektJsonDeSerializer())
-                .deserializerByType(Folder.class, new RmObjektJsonDeSerializer())
+                .deserializerByType(RMObject.class, new RmObjektJsonDeSerializer())
                 .modules(new JavaTimeModule());
     }
 
@@ -50,8 +48,8 @@ public class JacksonConfiguration {
     public MappingJackson2XmlHttpMessageConverter mappingJackson2XmlHttpMessageConverter(
             Jackson2ObjectMapperBuilder builder) {
         XmlMapper objectMapper = builder.createXmlMapper(true).build();
-        objectMapper.configure(ToXmlGenerator.Feature.WRITE_XML_DECLARATION, true);
-        return new MappingJackson2XmlHttpMessageConverter(
-                objectMapper);
+        objectMapper.configure(ToXmlGenerator.Feature.WRITE_XML_DECLARATION, true)
+            .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+        return new MappingJackson2XmlHttpMessageConverter(objectMapper);
     }
 }

@@ -36,8 +36,10 @@ public class RmObjektJsonSerializer extends JsonSerializer<RMObject> {
             final QName qName;
             if (gen.getOutputContext().getCurrentName() != null) {
                 qName = new QName(null, gen.getOutputContext().getCurrentName());
-            } else {
+            } else if (gen.getOutputContext().getParent() != null){
                 qName = new QName(null, gen.getOutputContext().getParent().getCurrentName());
+            } else {
+                qName = QName.valueOf("test");
             }
             gen.writeRawValue(new CanonicalXML().marshalInline(value, qName));
         } else {
