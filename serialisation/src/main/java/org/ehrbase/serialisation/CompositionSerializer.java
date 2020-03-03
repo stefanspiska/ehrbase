@@ -957,7 +957,8 @@ public class CompositionSerializer {
                 retmap = null;
 
         } else if (item instanceof ItemTree) {
-            Map<String, Object> ltree = newMultiMap();
+            //Map<String, Object> ltree = newMultiMap();    // FIXME 167: remove when done
+            Map<String, Object> ltree = new TreeMap<>();
 
             ItemTree tree = (ItemTree) item;
 
@@ -1011,6 +1012,19 @@ public class CompositionSerializer {
 
         if (retmap != null) {
             retmap.put(CompositionSerializer.TAG_CLASS, className(item)); //this will come out as an array...
+            retmap.put("_type", item.getClass().getName());   // FIXME 167: testing..
+
+            // check and add 'name' and 'archetype_node_id' which are necessary for all Locatables
+            if (item.getName() != null && item.getArchetypeNodeId() != null) {
+
+                Map<String, Object> nameMap = new TreeMap<>();  // generate structure of 'name' property
+                nameMap.put(CompositionSerializer.TAG_CLASS, className(item.getName()));
+                nameMap.put("value", item.getName().getValue());
+                retmap.put(CompositionSerializer.TAG_NAME, nameMap); // FIXME 167: toString()?
+
+                String archetypeNodeId = item.getArchetypeNodeId();
+                retmap.put(CompositionSerializer.TAG_ARCHETYPE_NODE_ID, archetypeNodeId);
+            }
         }
         return retmap;
 
