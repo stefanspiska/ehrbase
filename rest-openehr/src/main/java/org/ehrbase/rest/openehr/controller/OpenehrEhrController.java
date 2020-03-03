@@ -23,6 +23,7 @@ import org.ehrbase.api.exception.InvalidApiParameterException;
 import org.ehrbase.api.exception.ObjectNotFoundException;
 import org.ehrbase.api.exception.StateConflictException;
 import org.ehrbase.api.service.EhrService;
+import org.ehrbase.api.service.ValidationService;
 import org.ehrbase.rest.openehr.controller.OperationNotesResourcesReaderOpenehr.ApiNotes;
 import org.ehrbase.rest.openehr.response.EhrResponseData;
 import org.ehrbase.rest.openehr.response.InternalResponse;
@@ -52,11 +53,12 @@ import java.util.function.Supplier;
 public class OpenehrEhrController extends BaseController {
 
     private final EhrService ehrService;
+    private final ValidationService validationService;
 
     @Autowired
-    public OpenehrEhrController(EhrService ehrService) {
-
+    public OpenehrEhrController(EhrService ehrService, ValidationService validationService) {
         this.ehrService = Objects.requireNonNull(ehrService);
+        this.validationService = Objects.requireNonNull(validationService);
     }
 
     @PostMapping//(consumes = {"application/xml", "application/json"})
@@ -84,6 +86,7 @@ public class OpenehrEhrController extends BaseController {
                                     @ApiParam(value = "An ehr_status may be supplied as the request body") @RequestBody(required = false) EhrStatus ehrStatus) {
         final UUID ehrId;
         if (ehrStatus != null) {
+            validationService.validate(ehrStatus);
             ehrId = ehrService.create(ehrStatus, null);
         } else {
             ehrId = ehrService.create(null, null);
@@ -118,6 +121,8 @@ public class OpenehrEhrController extends BaseController {
         if (ehrService.hasEhr(ehrId)) {
             throw new StateConflictException("EHR with this ID already exists");
         }
+
+        validationService.validate(ehrStatus);
 
         final UUID resultEhrId;
         if (ehrStatus != null) {

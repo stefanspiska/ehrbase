@@ -969,10 +969,13 @@ public class CompositionSerializer {
                     compactEntry(subItem, ltree, getNodeTag(TAG_ITEMS, subItem, ltree), traverse(subItem, TAG_ITEMS));
                 }
             }
-            if (ltree.size() > 0)
+
+            retmap = ltree; // FIXME 167: empty content valid for other ItemStructures too?
+
+            /*if (ltree.size() > 0)
                 retmap = ltree;
             else
-                retmap = null;
+                retmap = null;*/
 
         } else if (item instanceof ItemTable) {
 //CHC:160317			Map<String, Object>ltree = newPathMap();

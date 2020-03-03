@@ -18,6 +18,8 @@
 
 package org.ehrbase.service;
 
+import com.nedap.archie.aom.Archetype;
+import com.nedap.archie.rm.RMObject;
 import com.nedap.archie.rminfo.ArchieRMInfoLookup;
 import com.nedap.archie.rmobjectvalidator.RMObjectValidationMessage;
 import com.nedap.archie.rmobjectvalidator.RMObjectValidator;
@@ -25,6 +27,7 @@ import org.ehrbase.api.exception.UnprocessableEntityException;
 import org.ehrbase.api.service.ValidationService;
 import org.ehrbase.ehr.knowledge.I_KnowledgeCache;
 import org.ehrbase.terminology.openehr.TerminologyService;
+import org.ehrbase.validation.RMObjectValidation;
 import org.ehrbase.validation.Validator;
 import com.nedap.archie.rm.composition.Composition;
 import org.ehrbase.validation.terminology.ItemStructureVisitor;
@@ -129,6 +132,12 @@ public class ValidationServiceImp implements ValidationService {
 
 
         check(composition.getArchetypeDetails().getTemplateId().getValue(), composition);
+    }
+
+    @Override
+    public void validate(RMObject rmObject) {
+        RMObjectValidation.validate(rmObject);
+
     }
 
     @Override

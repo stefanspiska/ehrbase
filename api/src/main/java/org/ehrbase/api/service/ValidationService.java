@@ -18,6 +18,7 @@
 
 package org.ehrbase.api.service;
 
+import com.nedap.archie.rm.RMObject;
 import com.nedap.archie.rm.composition.Composition;
 
 import java.util.UUID;
@@ -55,6 +56,12 @@ public interface ValidationService {
      * @throws IllegalArgumentException
      */
     void check(Composition composition) throws Exception;
+
+    /**
+     * FIXME 167: docs!
+     * @param archetype
+     */
+    void validate(RMObject rmObject);
 
     /**
      * Remove all mappings in the cache
