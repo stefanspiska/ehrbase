@@ -39,6 +39,7 @@ import org.ehrbase.api.service.ValidationService;
 import org.ehrbase.dao.access.interfaces.*;
 import org.ehrbase.dao.access.jooq.AttestationAccess;
 import org.ehrbase.serialisation.CanonicalJson;
+import org.ehrbase.service.util.DatetimeHelper;
 import org.jooq.DSLContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -258,9 +259,9 @@ public class EhrServiceImp extends BaseService implements EhrService {
      * Fetches time of creation of specific EHR record
      *
      * @param ehrId
-     * @return LocalDateTime instance of timestamp from DB
+     * @return String instance of timestamp from DB
      */
-    public LocalDateTime getCreationTime(UUID ehrId) {
+    public String getCreationTime(UUID ehrId) {
         //pre-step: check for valid ehrId
         if (hasEhr(ehrId).equals(Boolean.FALSE)) {
             throw new ObjectNotFoundException("ehr", "No EHR found with given ID: " + ehrId.toString());
@@ -268,7 +269,7 @@ public class EhrServiceImp extends BaseService implements EhrService {
 
         try {
             I_EhrAccess ehrAccess = I_EhrAccess.retrieveInstance(getDataAccess(), ehrId);
-            return ehrAccess.getEhrRecord().getDateCreated().toLocalDateTime();
+            return DatetimeHelper.toApiTime(ehrAccess.getEhrRecord().getDateCreated(), ehrAccess.getEhrRecord().getDateCreatedTzid());
         } catch (Exception e) {
             logger.error(e.getMessage());
             throw new InternalServerException(e);

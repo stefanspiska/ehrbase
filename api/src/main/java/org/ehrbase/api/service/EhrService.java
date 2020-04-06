@@ -90,7 +90,7 @@ public interface EhrService extends BaseService {
      */
     String getLatestVersionUidOfStatus(UUID ehrId);
 
-    LocalDateTime getCreationTime(UUID ehrId);
+    String getCreationTime(UUID ehrId);
 
     /**
      * Get version number of EHR_STATUS associated with given EHR UID at given timestamp.
