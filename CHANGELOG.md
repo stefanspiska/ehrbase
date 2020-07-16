@@ -9,9 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- OAuth 2.0 support. (see: https://github.com/ehrbase/ehrbase/pull/242)
+
 ### Changed
 
 ### Fixed
+
+- Console logging and logging from code. Cleaned dependencies and updated to the newest Spring Boot version as well. (see: https://github.com/ehrbase/ehrbase/pull/267)
 
 ## [0.13.0] (beta)
 
