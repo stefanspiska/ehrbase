@@ -186,6 +186,75 @@ AQL LOADED DB SMOKE TEST
 #///                                                                  ///
 #////////////////////////////////////////////////////////////////////////
 
+001 - Execute Ad-Hoc Queries - nested contains
+    [Template]          execute ad-hoc query (no result comparison)
+    [tags]              nested-contains
+    nested_contains/001_nested_and_contains.json
+    nested_contains/002_nested_and_contains_anyehr.json
+    nested_contains/003_nested_and_contains_nocompoarchid.json
+    nested_contains/004_nested_and_contains_nocompoarchid_anyehr.json
+    nested_contains/005_nested_and3_contains.json
+    nested_contains/006_nested_and3_contains_anyehr.json
+    nested_contains/007_nested_and3_contains_nocompoarchid.json
+    nested_contains/008_nested_and3_contains_nocompoarchid_anyehr.json
+    nested_contains/009_nested_or_contains.json
+    nested_contains/010_nested_or_contains_anyehr.json
+    nested_contains/011_nested_or_contains_nocompoarchid.json
+    nested_contains/012_nested_or_contains_nocompoarchid_anyehr.json
+    nested_contains/013_nested_or2_and_contains.json
+    nested_contains/014_nested_or2_and_contains_anyehr.json
+    nested_contains/015_nested_or2_and_contains_nocompoarchid.json
+    nested_contains/016_nested_or2_and_contains_nocompoarchid_anyehr.json
+    nested_contains/017_nested_or2_and_p_contains.json
+    nested_contains/018_nested_or2_and_p_contains_anyehr.json
+    nested_contains/019_nested_or2_and_p_contains_nocompoarchid.json
+    nested_contains/020_nested_or2_and_p_contains_nocompoarchid_anyehr.json
+    nested_contains/021_nested_or3_contains.json
+    nested_contains/022_nested_or3_contains_anyehr.json
+    nested_contains/023_nested_or3_contains_nocompoarchid.json
+    nested_contains/024_nested_or3_contains_nocompoarchid_anyehr.json
+    nested_contains/025_nested_3_levels_contains.json
+    nested_contains/026_nested_3_levels_contains_anyehr.json
+    nested_contains/027_nested_3_levels_contains_nocompoarchid.json
+    nested_contains/028_nested_3_levels_contains_nocompoarchid_anyehr.json
+    [Teardown]          TRACE GITHUB ISSUE  NO-ISSUE  not-ready
+
+
+002 - Execute Ad-Hoc Queries - nested contains
+    [Template]          execute ad-hoc query (no result comparison)
+    [Documentation]     {"error":"Could not retrieve stored query, reason:java.lang.NullPointerException","status":"Bad Request"}
+    [tags]              nested-contains    260
+    nested_contains/029_nested_4_levels_contains.json
+    nested_contains/031_nested_4_levels_contains_noarchid_1.json
+    nested_contains/032_nested_4_levels_contains_noarchid_2.json
+    nested_contains/033_nested_4_levels_contains_nocompoarchid.json
+    nested_contains/035_nested_5_levels_contains.json
+    nested_contains/037_nested_5_levels_contains_noarchid_1.json
+    nested_contains/038_nested_5_levels_contains_noarchid_2.json
+    nested_contains/039_nested_5_levels_contains_noarchid_3.json
+    nested_contains/040_nested_5_levels_contains_nocompoarchid.json
+    nested_contains/042_nested_6_levels_contains.json
+    nested_contains/044_nested_6_levels_contains_noarchid_1.json
+    nested_contains/045_nested_6_levels_contains_noarchid_2.json
+    nested_contains/046_nested_6_levels_contains_noarchid_3.json
+    nested_contains/047_nested_6_levels_contains_noarchid_4.json
+    nested_contains/048_nested_6_levels_contains_nocompoarchid.json
+    [Teardown]          TRACE GITHUB ISSUE  260  not-ready
+
+
+003 - Execute Ad-Hoc Queries - nested contains
+    [Template]          execute ad-hoc query (no result comparison)
+    [Documentation]     {'error': 'Could not process query, reason:java.lang.NullPointerException','status': 'Bad Request'}
+    [tags]              nested-contains
+    nested_contains/030_nested_4_levels_contains_anyehr.json
+    nested_contains/034_nested_4_levels_contains_nocompoarchid_anyehr.json
+    nested_contains/036_nested_5_levels_contains_anyehr.json
+    nested_contains/041_nested_5_levels_contains_nocompoarchid_anyehr.json
+    nested_contains/043_nested_6_levels_contains_anyehr.json
+    nested_contains/049_nested_6_levels_contains_nocompoarchid_anyehr.json
+    [Teardown]          TRACE GITHUB ISSUE  313  not-ready
+    
+
 A-101 Execute Ad-Hoc Query - Get EHRs
     [Template]          execute ad-hoc query and check result (loaded DB)
     [Tags]              205

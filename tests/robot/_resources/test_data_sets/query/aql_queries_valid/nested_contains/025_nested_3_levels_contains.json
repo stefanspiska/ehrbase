@@ -3,6 +3,6 @@
   "offset": 0,
   "fetch": 20,
   "query_parameters": {
-    "ehr_id": "__set_by_testehr__"
+    "ehr_id": "__BIGFAKE_000000000000000000000000000_EHR_ID__"
   }
 }

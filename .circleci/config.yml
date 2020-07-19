@@ -171,6 +171,17 @@ workflows:
                 - release
                 - master
 
+      - QUERYSERVICE-test-3:
+          context: org-global
+          requires:
+            - build-artifacts
+            - unit-tests
+          filters:
+            branches:
+              ignore:
+                - release
+                - master
+
       - ROBOT-REPORT:
           context: org-global
           requires:
@@ -185,6 +196,7 @@ workflows:
             - KNOWLEDGE-test
             - QUERYSERVICE-test-1
             - QUERYSERVICE-test-2
+            - QUERYSERVICE-test-3
           filters:
             branches:
               ignore:
@@ -351,6 +363,16 @@ workflows:
               only:
                 - /^(release\/v\d+\.\d+\.\d+|master)$/
 
+      - QUERYSERVICE-test-3:
+          context: org-global
+          requires:
+            - build-artifacts
+            - unit-tests
+          filters:
+            branches:
+              only:
+                - /^(release\/v\d+\.\d+\.\d+|master)$/
+
       - ROBOT-REPORT:
           context: org-global
           requires:
@@ -365,6 +387,7 @@ workflows:
             - KNOWLEDGE-test
             - QUERYSERVICE-test-1
             - QUERYSERVICE-test-2
+            - QUERYSERVICE-test-3
           filters:
             branches:
               only:
@@ -535,6 +558,15 @@ jobs:
             include-tags: "adhoc-queryANDloaded_db"
             test-suite-path: "QUERY_SERVICE_TESTS"
             test-suite-name: "ADHOC-QUERY-2"
+
+  QUERYSERVICE-test-3:
+    machine:
+          image: ubuntu-1604:201903-01
+    steps:
+      - run-robot-tests:
+            include-tags: "nested-contains"
+            test-suite-path: "QUERY_SERVICE_TESTS"
+            test-suite-name: "ADHOC-QUERY-NESTED-CONTAINS"
 
   ROBOT-REPORT:
       machine:
