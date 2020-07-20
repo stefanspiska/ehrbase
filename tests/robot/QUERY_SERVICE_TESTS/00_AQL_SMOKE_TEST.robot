@@ -42,6 +42,7 @@ AQL LOADED DB SMOKE TEST
         upload OPT      minimal/minimal_action.opt
         upload OPT      minimal/minimal_action_2.opt
         upload OPT      all_types/Test_all_types.opt
+        upload OPT      nested/nested.opt
 
         # comment: Populate SUT with Test-Data and Prepare Expected Results
         Create EHR Record On The Server    1    ${ehr data sets}/ehr_status_01.json
@@ -51,6 +52,7 @@ AQL LOADED DB SMOKE TEST
         Commit Compo     4    1    ${compo data sets}/minimal_observation_1.composition.json
         Commit Compo     5    1    ${compo data sets}/minimal_action2_1.composition.json
         Commit Compo     6    1    ${compo data sets}/all_types.composition.json
+        Commit Compo     7    1    ${compo data sets}/nested_composition.json
 
         #///////////////////////////////////////////////////
         #//                                              ///
