@@ -661,7 +661,7 @@ jobs:
           image: ubuntu-1604:201903-01
     steps:
       - run-robot-tests:
-            include-tags: "nested-contains"
+            include-tags: "nested-contains -i SMOKE"
             test-suite-path: "QUERY_SERVICE_TESTS"
             test-suite-name: "ADHOC-QUERY-NESTED-CONTAINS"
 
