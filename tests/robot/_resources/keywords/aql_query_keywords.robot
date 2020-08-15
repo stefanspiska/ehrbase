@@ -462,6 +462,35 @@ Preconditions (PART 1) - Load Blueprints of Queries and Expected-Results
                         ...            D/501_select_data_values_from_compositions_with_given_archetype_in_ehr.json
                         ...            D/502_select_data_values_from_compositions_with_given_archetype_in_ehr.json
                         ...            D/503_select_data_values_from_compositions_with_given_archetype_in_ehr.json
+                        ...            E/001_nested_and_contains.json
+                        ...            E/003_nested_and_contains_nocompoarchid.json
+                        ...            E/005_nested_and3_contains.json
+                        ...            E/007_nested_and3_contains_nocompoarchid.json
+                        ...            E/009_nested_or_contains.json
+                        ...            E/011_nested_or_contains_nocompoarchid.json
+                        ...            E/013_nested_or2_and_contains.json
+                        ...            E/015_nested_or2_and_contains_nocompoarchid.json
+                        ...            E/017_nested_or2_and_p_contains.json
+                        ...            E/019_nested_or2_and_p_contains_nocompoarchid.json
+                        ...            E/021_nested_or3_contains.json
+                        ...            E/023_nested_or3_contains_nocompoarchid.json
+                        ...            E/025_nested_3_levels_contains.json
+                        ...            E/027_nested_3_levels_contains_nocompoarchid.json
+                        ...            E/029_nested_4_levels_contains.json
+                        ...            E/031_nested_4_levels_contains_noarchid_1.json
+                        ...            E/032_nested_4_levels_contains_noarchid_2.json
+                        ...            E/033_nested_4_levels_contains_nocompoarchid.json
+                        ...            E/035_nested_5_levels_contains.json
+                        ...            E/037_nested_5_levels_contains_noarchid_1.json
+                        ...            E/038_nested_5_levels_contains_noarchid_2.json
+                        ...            E/039_nested_5_levels_contains_noarchid_3.json
+                        ...            E/040_nested_5_levels_contains_nocompoarchid.json
+                        ...            E/042_nested_6_levels_contains.json
+                        ...            E/044_nested_6_levels_contains_noarchid_1.json
+                        ...            E/045_nested_6_levels_contains_noarchid_2.json
+                        ...            E/046_nested_6_levels_contains_noarchid_3.json
+                        ...            E/047_nested_6_levels_contains_noarchid_4.json
+                        ...            E/048_nested_6_levels_contains_nocompoarchid.json
 
                 FOR     ${blueprint}    IN    @{blueprints}
 
@@ -712,6 +741,36 @@ Commit Compo
     D/501
     D/502
     D/503
+
+    nested_contains    E/001
+    nested_contains    E/003
+    nested_contains    E/005
+    nested_contains    E/007
+    nested_contains    E/009
+    nested_contains    E/011
+    nested_contains    E/013
+    nested_contains    E/015
+    nested_contains    E/017
+    nested_contains    E/019
+    nested_contains    E/021
+    nested_contains    E/023
+    nested_contains    E/025
+    nested_contains    E/027
+    nested_contains    E/029
+    nested_contains    E/031
+    nested_contains    E/032
+    nested_contains    E/033
+    nested_contains    E/035
+    nested_contains    E/037
+    nested_contains    E/038
+    nested_contains    E/039
+    nested_contains    E/040
+    nested_contains    E/042
+    nested_contains    E/044
+    nested_contains    E/045
+    nested_contains    E/046
+    nested_contains    E/047
+    nested_contains    E/048
 
 
     # BACKLOG / DATA GENERATION NOT READY/POSSIBLE OR NOT CLEAR HOW TO DO
@@ -1595,6 +1654,22 @@ D/503
 
 
 
+
+
+
+
+# ==========================================================================================
+# NESTED-CONTAINS
+
+nested_contains
+    [Arguments]         ${dataset}
+    Update Query-Parameter in Temp Query-Data-Set    ${dataset}
+
+
+
+# nested_contains/031
+# nested_contains/032
+# nested_contains/033
 
 
 
