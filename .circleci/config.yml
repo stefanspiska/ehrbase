@@ -206,7 +206,7 @@ workflows:
           context: org-global
           requires:
             - build-artifacts
-            - unit-tests
+            - run-unit-tests
           filters:
             branches:
               ignore:
@@ -433,7 +433,7 @@ workflows:
           context: org-global
           requires:
             - build-artifacts
-            - unit-tests
+            - run-unit-tests
           filters:
             branches:
               only:
