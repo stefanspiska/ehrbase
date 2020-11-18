@@ -23,7 +23,7 @@ import com.nedap.archie.rm.changecontrol.Version;
 import org.apache.commons.io.IOUtils;
 import org.ehrbase.response.ehrscape.CompositionFormat;
 import org.ehrbase.test_data.contribution.ContributionTestDataCanonicalJson;
-import org.junit.Test;
+// import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,7 +35,13 @@ import java.util.Map;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.junit.jupiter.api.*;
+
 public class ContributionServiceHelperTest {
+
+    private static final Logger log = LoggerFactory.getLogger(ContributionServiceHelperTest.class);
 
     @Test
     public void splitContent() throws IOException {

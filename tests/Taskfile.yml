@@ -84,6 +84,19 @@ tasks:
       - rm -rf /tmp/file/*
       - echo ... DB server stopped.
 
+  start_fhirdb:
+    desc: START DOCKER POSTGRES DB FOR FHIRBRIDGE
+    cmds:
+      - echo ... starting FHIRBRIDGE DB ...
+      - docker run --name fhirdb -e POSTGRES_USER=fhir_bridge -e POSTGRES_PASSWORD=fhir_bridge -d -p 9999:5432 postgres:11.5-alpine
+      - echo ... DB server started.
+
+  stop_fhirdb:
+    desc: KILL FHIRDB - docker container rm -f fhirdb
+    cmds:
+      - docker container rm -f fhirdb
+      - echo ... FHIRDB stopped.
+
   package:
     desc: mvn package -Dmaven.javadoc.skip=true
     cmds:

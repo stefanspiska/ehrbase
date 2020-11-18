@@ -22,7 +22,7 @@
         <version>0.14.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    
+
     <artifactId>test-coverage</artifactId>
 
     <!-- MODULES TO INCLUDE INTO CODE-COVERAGE ANALISYS -->
@@ -47,7 +47,7 @@
             <artifactId>jooq-pg</artifactId>
             <version>${project.version}</version>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>org.ehrbase.openehr</groupId>
             <artifactId>rest-openehr</artifactId>
             <version>${project.version}</version>
@@ -61,7 +61,7 @@
             <groupId>org.ehrbase.openehr</groupId>
             <artifactId>service</artifactId>
             <version>${project.version}</version>
-        </dependency> 
+        </dependency>
     </dependencies>
 
     <build>

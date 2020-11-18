@@ -2,16 +2,24 @@ package org.ehrbase.api.util;
 
 import java.util.UUID;
 
-import org.junit.Test;
+// import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.junit.jupiter.api.*;
 
+
+@DisplayName("Version UID Helper Test")
 public class VersionUidHelperTest {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(VersionUidHelperTest.class);
 
     static final String VALID_VERSION_UID = "1234abcd-5678-ef12-ab34-cd56ef78ab90::test.ehrbase.org::10";
 
     @Test
+    @DisplayName("Accepts Valid Version UID")
     public void acceptsValidVersionUid() {
         assertThat(VersionUidHelper.isVersionUid(VALID_VERSION_UID)).isTrue();
     }
