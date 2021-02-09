@@ -253,7 +253,7 @@ commit same composition again
                         ...                 Accept=application/json
                         ...                 Prefer=return=representation
 
-        TRACE GITHUB ISSUE  125  not-ready
+        TRACE GITHUB ISSUE  125  bug
 
     ${resp}=            Post Request        ${SUT}   /ehr/${ehr_id}/composition   data=${file}   headers=${headers}
                         log to console      ${resp.content}
@@ -448,7 +448,7 @@ get versioned composition by uid
 
                         prepare new request session    ${format}
 
-        TRACE GITHUB ISSUE  122  not-ready
+        TRACE GITHUB ISSUE  122  bug
 
     ${resp}=            Get Request         ${SUT}    /ehr/${ehr_id}/versioned_composition/${uid}    headers=${headers}
                         log to console      ${resp.content}
@@ -480,11 +480,6 @@ get composition - latest version
     ...                 format: JSON or XML for accept/content headers
 
                         prepare new request session    ${format}    Prefer=return=representation
-
-        ####### TODO: @WLAD/PABLO - remove when fixed!!!!! #####################
-        TRACE GITHUB ISSUE  17  not-ready
-        ########################################################################
-
     ${resp}=            Get Request           ${SUT}   /ehr/${ehr_id}/versioned_composition/${versioned_object_uid}/version    headers=${headers}
                         log to console        ${resp.text}
                         Set Test Variable     ${response}    ${resp}
@@ -538,11 +533,6 @@ get versioned composition - version at time
 
     # Get version at time 1, should exist and be COMPO 1
     &{params}=          Create Dictionary     version_at_time=${time_x}
-
-        ####### TODO: @WLAD/PABLO - remove when fixed!!!!! #####################
-        TRACE GITHUB ISSUE  17  not-ready
-        ########################################################################
-
     ${resp}=            Get Request           ${SUT}   /ehr/${ehr_id}/versioned_composition/${versioned_object_uid}/version
                         ...                   params=${params}
 
@@ -561,11 +551,6 @@ get composition - version at time (XML)
 
     &{params}=          Create Dictionary     version_at_time=$${time_x}
     &{headers}=         Create Dictionary     Accept=application/xml
-
-        ####### TODO: @WLAD/PABLO - remove when fixed!!!!! #####################
-        TRACE GITHUB ISSUE  17  not-ready
-        ########################################################################
-
     ${resp}=            Get Request           ${SUT}   /ehr/${ehr_id}/versioned_composition/${versioned_object_uid}/version
                         ...                   params=${params}   headers=${headers}
 
@@ -729,9 +714,10 @@ capture point in time
     ...                 exposes to test level scope a variable e.g. `${time_1}`
     ...                 which's value is a given time in the extended ISO8601 format
     ...                 e.g. 2015-01-20T19:30:22.765+01:00
+    ...                 s. http://robotframework.org/robotframework/latest/libraries/DateTime.html
+    ...                 for DateTime Library docs
 
-    ${time}=            Get Current Date    UTC    result_format=%Y-%m-%dT%H:%M:%S
-    # ${time_tz}=         Catenate            SEPARATOR=${EMPTY}    ${time}   +00:00
+    ${time}=            Get Current Date    result_format=%Y-%m-%dT%H:%M:%S.%f
                         Set Suite Variable   ${time_${point_in_time}}   ${time}+00:00
                         Sleep               1
 
