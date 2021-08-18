@@ -1,0 +1,20 @@
+{
+  "ctx/language": "en",
+  "ctx/territory": "US",
+  "ctx/composer_name": "Silvia Blake",
+  "ctx/id_namespace": "HOSPITAL-NS",
+  "ctx/id_scheme": "HOSPITAL-NS",
+  "ctx/participation_name": "Dr. Marcus Johnson",
+  "ctx/participation_function": "requester",
+  "ctx/participation_mode": "face-to-face communication",
+  "ctx/participation_id": "199",
+  "ctx/participation_name:1": "Lara Markham",
+  "ctx/participation_function:1": "performer",
+  "ctx/participation_id:1": "198",
+  "ctx/health_care_facility|name": "Hospital",
+  "ctx/health_care_facility|id": "9091",
+  "test_versioned/blood_pressure:0/any_event:0/systolic|magnitude": 663.0,
+  "test_versioned/blood_pressure:0/any_event:0/systolic|unit": "mm[Hg]",
+  "test_versioned/blood_pressure:0/any_event:0/diastolic|magnitude": 100.0,
+  "test_versioned/blood_pressure:0/any_event:0/diastolic|unit": "mm[Hg]"
+}

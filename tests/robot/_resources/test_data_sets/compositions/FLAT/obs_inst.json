@@ -1,0 +1,22 @@
+{
+  "ctx/language": "en",
+  "ctx/territory": "US",
+  "ctx/composer_name": "Silvia Blake",
+  "ctx/id_namespace": "HOSPITAL-NS",
+  "ctx/id_scheme": "HOSPITAL-NS",
+  "ctx/participation_name": "Dr. Marcus Johnson",
+  "ctx/participation_function": "requester",
+  "ctx/participation_mode": "face-to-face communication",
+  "ctx/participation_id": "199",
+  "ctx/participation_name:1": "Lara Markham",
+  "ctx/participation_function:1": "performer",
+  "ctx/participation_id:1": "198",
+  "ctx/health_care_facility|name": "Hospital",
+  "ctx/health_care_facility|id": "9091",
+  "minimal/minimal:0/text": "text 49",
+  "minimal/minimal2:0/_uid": "d695a6ee-08f7-4de9-8eee-97b148fb242a",
+  "minimal/minimal2:0/current_activity/duration": "PT0S",
+  "minimal/minimal2:0/current_activity/timing": "R1/2021-08-18T20:00:00+02:00/P3M",
+  "minimal/minimal2:0/expiry_time": "2021-08-18T20:07:49.992453+02:00",
+  "minimal/minimal2:0/narrative": "Human readable instruction narrative"
+}
