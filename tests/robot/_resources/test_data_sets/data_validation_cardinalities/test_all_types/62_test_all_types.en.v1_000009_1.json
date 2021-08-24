@@ -1,0 +1,255 @@
+{
+    "_type": "COMPOSITION",
+    "name": {
+        "_type": "DV_TEXT",
+        "value": "Test all types"
+    },
+    "archetype_details": {
+        "archetype_id": {
+            "value": "openEHR-EHR-COMPOSITION.test_all_types.v1"
+        },
+        "template_id": {
+            "value": "62_test_all_types.en.v1"
+        },
+        "rm_version": "1.0.2"
+    },
+    "archetype_node_id": "openEHR-EHR-COMPOSITION.test_all_types.v1",
+    "language": {
+        "terminology_id": {
+            "value": "ISO_639-1"
+        },
+        "code_string": "en"
+    },
+    "territory": {
+        "terminology_id": {
+            "value": "ISO_3166-1"
+        },
+        "code_string": "UY"
+    },
+    "category": {
+        "value": "event",
+        "defining_code": {
+            "terminology_id": {
+                "value": "openehr"
+            },
+            "code_string": "433"
+        }
+    },
+    "composer": {
+        "_type": "PARTY_IDENTIFIED",
+        "external_ref": {
+            "id": {
+                "_type": "HIER_OBJECT_ID",
+                "value": "bad508bc-d4f5-474c-959a-796bc1bb1139"
+            },
+            "namespace": "DEMOGRAPHIC",
+            "type": "PERSON"
+        },
+        "name": "Dr. House"
+    },
+    "context": {
+        "start_time": {
+            "value": "20210823T222139,967-0300"
+        },
+        "setting": {
+            "value": "home",
+            "defining_code": {
+                "terminology_id": {
+                    "value": "openehr"
+                },
+                "code_string": "225"
+            }
+        }
+    },
+    "content": [
+        {
+            "_type": "OBSERVATION",
+            "name": {
+                "_type": "DV_TEXT",
+                "value": "Test all types"
+            },
+            "archetype_node_id": "openEHR-EHR-OBSERVATION.test_all_types.v1",
+            "language": {
+                "terminology_id": {
+                    "value": "ISO_639-1"
+                },
+                "code_string": "en"
+            },
+            "encoding": {
+                "terminology_id": {
+                    "value": "Unicode"
+                },
+                "code_string": "UTF-8"
+            },
+            "subject": {
+                "_type": "PARTY_SELF"
+            },
+            "data": {
+                "_type": "HISTORY",
+                "name": {
+                    "_type": "DV_TEXT",
+                    "value": "Event Series"
+                },
+                "archetype_node_id": "at0001",
+                "origin": {
+                    "_type": "DV_DATE_TIME",
+                    "value": "20210823T222139,969-0300"
+                },
+                "events": [
+                    
+                ]
+            }
+        },
+        {
+            "_type": "EVALUATION",
+            "name": {
+                "_type": "DV_TEXT",
+                "value": "Test all types"
+            },
+            "archetype_node_id": "openEHR-EHR-EVALUATION.test_all_types.v1",
+            "language": {
+                "terminology_id": {
+                    "value": "ISO_639-1"
+                },
+                "code_string": "en"
+            },
+            "encoding": {
+                "terminology_id": {
+                    "value": "Unicode"
+                },
+                "code_string": "UTF-8"
+            },
+            "subject": {
+                "_type": "PARTY_SELF"
+            },
+            "data": {
+                "_type": "ITEM_TREE",
+                "name": {
+                    "_type": "DV_TEXT",
+                    "value": "Arbol"
+                },
+                "archetype_node_id": "at0001",
+                "items": [
+                    {
+                        "_type": "ELEMENT",
+                        "name": {
+                            "_type": "DV_TEXT",
+                            "value": "uri"
+                        },
+                        "archetype_node_id": "at0002",
+                        "value": {
+                            "_type": "DV_URI",
+                            "value": "http://cabolabs.com"
+                        }
+                    },
+                    {
+                        "_type": "ELEMENT",
+                        "name": {
+                            "_type": "DV_TEXT",
+                            "value": "interval count"
+                        },
+                        "archetype_node_id": "at0003",
+                        "value": {
+                            "_type": "DV_INTERVAL",
+                            "lower_included": true,
+                            "upper_included": true,
+                            "lower": {
+                                "_type": "DV_COUNT",
+                                "magnitude": 4
+                            },
+                            "upper": {
+                                "_type": "DV_COUNT",
+                                "magnitude": 99
+                            },
+                            "lower_unbounded": true,
+                            "upper_unbounded": true
+                        }
+                    },
+                    {
+                        "_type": "ELEMENT",
+                        "name": {
+                            "_type": "DV_TEXT",
+                            "value": "interval quantity"
+                        },
+                        "archetype_node_id": "at0004",
+                        "value": {
+                            "_type": "DV_INTERVAL",
+                            "lower_included": false,
+                            "upper_included": false,
+                            "lower": {
+                                "_type": "DV_QUANTITY",
+                                "magnitude": 598.2,
+                                "units": "_no_constraint_defined_"
+                            },
+                            "upper": {
+                                "_type": "DV_QUANTITY",
+                                "magnitude": 736.5,
+                                "units": "_no_constraint_defined_"
+                            },
+                            "lower_unbounded": true,
+                            "upper_unbounded": true
+                        }
+                    },
+                    {
+                        "_type": "ELEMENT",
+                        "name": {
+                            "_type": "DV_TEXT",
+                            "value": "interval datetime"
+                        },
+                        "archetype_node_id": "at0005",
+                        "value": {
+                            "_type": "DV_INTERVAL",
+                            "lower": {
+                                "_type": "DV_DATE_TIME",
+                                "value": "20210823T222139,975-0300"
+                            },
+                            "upper": {
+                                "_type": "DV_DATE_TIME",
+                                "value": "20210823T222139,976-0300"
+                            },
+                            "lower_unbounded": false,
+                            "upper_unbounded": false,
+                            "lower_included": true,
+                            "upper_included": true
+                        }
+                    },
+                    {
+                        "_type": "ELEMENT",
+                        "name": {
+                            "_type": "DV_TEXT",
+                            "value": "choice"
+                        },
+                        "archetype_node_id": "at0009",
+                        "value": {
+                            "_type": "DV_QUANTITY",
+                            "magnitude": 0.2,
+                            "units": "mm[H20]"
+                        }
+                    },
+                    {
+                        "_type": "CLUSTER",
+                        "name": {
+                            "_type": "DV_TEXT",
+                            "value": "cluster 1"
+                        },
+                        "archetype_node_id": "at0006",
+                        "items": [
+                            
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "_type": "SECTION",
+            "name": {
+                "_type": "DV_TEXT",
+                "value": "Test all types"
+            },
+            "archetype_node_id": "openEHR-EHR-SECTION.test_all_types.v1",
+            "items": [
+                
+            ]
+        }
+    ]
+}

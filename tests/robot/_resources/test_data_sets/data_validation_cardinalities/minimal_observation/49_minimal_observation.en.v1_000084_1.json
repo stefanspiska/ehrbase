@@ -1,0 +1,195 @@
+{
+    "_type": "COMPOSITION",
+    "name": {
+        "_type": "DV_TEXT",
+        "value": "Minimal"
+    },
+    "archetype_details": {
+        "archetype_id": {
+            "value": "openEHR-EHR-COMPOSITION.minimal.v1"
+        },
+        "template_id": {
+            "value": "49_minimal_observation.en.v1"
+        },
+        "rm_version": "1.0.2"
+    },
+    "archetype_node_id": "openEHR-EHR-COMPOSITION.minimal.v1",
+    "language": {
+        "terminology_id": {
+            "value": "ISO_639-1"
+        },
+        "code_string": "en"
+    },
+    "territory": {
+        "terminology_id": {
+            "value": "ISO_3166-1"
+        },
+        "code_string": "UY"
+    },
+    "category": {
+        "value": "event",
+        "defining_code": {
+            "terminology_id": {
+                "value": "openehr"
+            },
+            "code_string": "433"
+        }
+    },
+    "composer": {
+        "_type": "PARTY_IDENTIFIED",
+        "external_ref": {
+            "id": {
+                "_type": "HIER_OBJECT_ID",
+                "value": "42331493-10ae-4110-9e93-943318dec070"
+            },
+            "namespace": "DEMOGRAPHIC",
+            "type": "PERSON"
+        },
+        "name": "Dr. House"
+    },
+    "context": {
+        "start_time": {
+            "value": "20210823T221927,103-0300"
+        },
+        "setting": {
+            "value": "home",
+            "defining_code": {
+                "terminology_id": {
+                    "value": "openehr"
+                },
+                "code_string": "225"
+            }
+        }
+    },
+    "content": [
+        {
+            "_type": "OBSERVATION",
+            "name": {
+                "_type": "DV_TEXT",
+                "value": "Minimal"
+            },
+            "archetype_node_id": "openEHR-EHR-OBSERVATION.minimal.v1",
+            "language": {
+                "terminology_id": {
+                    "value": "ISO_639-1"
+                },
+                "code_string": "en"
+            },
+            "encoding": {
+                "terminology_id": {
+                    "value": "Unicode"
+                },
+                "code_string": "UTF-8"
+            },
+            "subject": {
+                "_type": "PARTY_SELF"
+            },
+            "data": {
+                "_type": "HISTORY",
+                "name": {
+                    "_type": "DV_TEXT",
+                    "value": "Event Series"
+                },
+                "archetype_node_id": "at0001",
+                "origin": {
+                    "_type": "DV_DATE_TIME",
+                    "value": "20210823T221927,103-0300"
+                },
+                "events": [
+                    {
+                        "_type": "POINT_EVENT",
+                        "name": {
+                            "_type": "DV_TEXT",
+                            "value": "Cualquier evento"
+                        },
+                        "archetype_node_id": "at0002",
+                        "time": {
+                            "_type": "DV_DATE_TIME",
+                            "value": "20210823T221927,104-0300"
+                        },
+                        "data": {
+                            "_type": "ITEM_TREE",
+                            "name": {
+                                "_type": "DV_TEXT",
+                                "value": "Arbol"
+                            },
+                            "archetype_node_id": "at0003",
+                            "items": [
+                                {
+                                    "_type": "ELEMENT",
+                                    "name": {
+                                        "_type": "DV_TEXT",
+                                        "value": "text"
+                                    },
+                                    "archetype_node_id": "at0004",
+                                    "value": {
+                                        "_type": "DV_TEXT",
+                                        "value": "vAAGkbXc.EcqtBOGdJVDpGfdcNJoUrGhDiLMJTgtgyzUDDuHSHMoiOsAjyMYC,YafnlCHLCwl.yFskZQxMyLmFsgpDeTQuwFiMLIu.bRxllt,X.cDXkArQVgYifhCvNo,mW,FYcfLTVDMWayEOceJkvQPg.ClhROvwbZsnZnmQlWK mEPjwiUfIDAVYcKbTeL.mTSzktMwTFEfkMDGdpNtDuYeQDuCndfxMSjcbtKyoxV,MrL,HqNPHQXgG sET"
+                                    }
+                                },
+                                {
+                                    "_type": "ELEMENT",
+                                    "name": {
+                                        "_type": "DV_TEXT",
+                                        "value": "text"
+                                    },
+                                    "archetype_node_id": "at0004",
+                                    "value": {
+                                        "_type": "DV_TEXT",
+                                        "value": "JRKwXuernR.LFohGbiXaZOQyUZXUNOzNwdqqHw kLKsml JIAMGZEaDFc GSAEGkz,kRzD.gol,SaGpwg.QUSZAte,hqzfWVmFEUUpViaRwu x,YKYsOmG jKJEoDueilNSNUoOCGy,XLgJKvoNPlxhciMbrMtlK.BoWokENuCIYJmn.pEFAJAdAlragVMfszyasWYcbbXvlOqNVo QLbTceGbCfTF,SWvDimasjwXqIojtuRrJGtL YaQdzRCp"
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "_type": "POINT_EVENT",
+                        "name": {
+                            "_type": "DV_TEXT",
+                            "value": "Cualquier evento"
+                        },
+                        "archetype_node_id": "at0002",
+                        "time": {
+                            "_type": "DV_DATE_TIME",
+                            "value": "20210823T221927,111-0300"
+                        },
+                        "data": {
+                            "_type": "ITEM_TREE",
+                            "name": {
+                                "_type": "DV_TEXT",
+                                "value": "Arbol"
+                            },
+                            "archetype_node_id": "at0003",
+                            "items": [
+                                {
+                                    "_type": "ELEMENT",
+                                    "name": {
+                                        "_type": "DV_TEXT",
+                                        "value": "text"
+                                    },
+                                    "archetype_node_id": "at0004",
+                                    "value": {
+                                        "_type": "DV_TEXT",
+                                        "value": "sKpmTrNAUAIZyIaHsm.LlkDGQncDrxbCjAVJOsSZmwprUTNgfXVwCdjqqZyjoVcDsXKaXDZEL,IjzRzerzjiOe,AeAvp,pt kHRIA, fPUTP,d hPlhL,lZbHIyLbPeZlOz bmUjDPrlIMZEJtNKxgeakJqldZKPSuI.JTmOMVUMinHeXiuISJdfYehBbhDPzegNvPjitTOVksHLUOicjDboTx ZzqYAYFQBpNQY,D,rSwGbpnn LCSbJCuzElz"
+                                    }
+                                },
+                                {
+                                    "_type": "ELEMENT",
+                                    "name": {
+                                        "_type": "DV_TEXT",
+                                        "value": "text"
+                                    },
+                                    "archetype_node_id": "at0004",
+                                    "value": {
+                                        "_type": "DV_TEXT",
+                                        "value": "LPr.ZWvRFfkMuWBEvdxlvLQakGUnUOXNXGobik,EWvyvascFBiYWxbPpLCzJAZukaDVTc TxKUnxzbLDc,,SjExfWyfcxBOtwZHVMvSnONBlrYZXbfYomvEofnpecKWlrBqjFtfradwbOGlqBVdMTKhPOWVStOrgdMaZb.xOtuVYkXKjmtqGhOg SmamkH.RqShkwfyKrsMvfrCljsfJQSiVwEaiuLtJmYybAs.B vKpDPChvFOrrGGO,,p,VvP"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
