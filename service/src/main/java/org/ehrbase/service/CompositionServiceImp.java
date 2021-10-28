@@ -34,6 +34,7 @@ import com.nedap.archie.rm.generic.RevisionHistoryItem;
 import com.nedap.archie.rm.support.identification.HierObjectId;
 import com.nedap.archie.rm.support.identification.ObjectRef;
 import com.nedap.archie.rm.support.identification.ObjectVersionId;
+import org.ehrbase.api.aop.CompositionPostCommitListener;
 import org.ehrbase.api.definitions.ServerConfig;
 import org.ehrbase.api.exception.*;
 import org.ehrbase.api.service.CompositionService;
@@ -80,6 +81,7 @@ public class CompositionServiceImp extends BaseServiceImp implements Composition
   private final KnowledgeCacheService knowledgeCacheService;
   private final EhrService ehrService;
   private boolean supportCompositionXRef = false;
+  private final List<CompositionPostCommitListener> compositionPostCommitListeners;
 
   @Autowired
   public CompositionServiceImp(
@@ -87,12 +89,14 @@ public class CompositionServiceImp extends BaseServiceImp implements Composition
       ValidationService validationService,
       EhrService ehrService,
       DSLContext context,
-      ServerConfig serverConfig) {
+      ServerConfig serverConfig,
+      List<CompositionPostCommitListener> compositionPostCommitListeners) {
 
     super(knowledgeCacheService, context, serverConfig);
     this.validationService = validationService;
     this.ehrService = ehrService;
     this.knowledgeCacheService = knowledgeCacheService;
+    this.compositionPostCommitListeners = compositionPostCommitListeners;
   }
 
   @Override
@@ -100,13 +104,21 @@ public class CompositionServiceImp extends BaseServiceImp implements Composition
       UUID ehrId, Composition objData, UUID systemId, UUID committerId, String description) {
 
     UUID compositionId = internalCreate(ehrId, objData, systemId, committerId, description, null);
-    return getCompositionDto(I_CompositionAccess.retrieveInstance(getDataAccess(), compositionId));
+    Optional<CompositionDto> compositionDto =
+        getCompositionDto(I_CompositionAccess.retrieveInstance(getDataAccess(), compositionId));
+    compositionPostCommitListeners.forEach(
+        l -> compositionDto.ifPresent(d -> l.listen(d.getComposition())));
+    return compositionDto;
   }
 
   @Override
   public Optional<CompositionDto> create(UUID ehrId, Composition objData, UUID contribution) {
     UUID compositionId = internalCreate(ehrId, objData, null, null, null, contribution);
-    return getCompositionDto(I_CompositionAccess.retrieveInstance(getDataAccess(), compositionId));
+    Optional<CompositionDto> compositionDto =
+        getCompositionDto(I_CompositionAccess.retrieveInstance(getDataAccess(), compositionId));
+    compositionPostCommitListeners.forEach(
+        l -> compositionDto.ifPresent(d -> l.listen(d.getComposition())));
+    return compositionDto;
   }
 
   @Override
