@@ -30,14 +30,14 @@
   "rows": [
     [
       "__MODIFY_COMPOSITION_UID_1__",
-      "Minimal",
+      "O1_Minimal",
       "2019-01-28T21:22:19,552+0000",
       "2019-01-28T21:22:19,562+0000",
       "first value"
     ],
     [
       "__MODIFY_COMPOSITION_UID_2__",
-      "Minimal",
+      "O2_Minimal",
       "2019-01-28T21:22:19,552+0000",
       "2019-01-28T21:22:19,562+0000",
       "second value"

@@ -95,7 +95,7 @@
             "_type": "OBSERVATION",
             "name": {
                 "_type": "DV_TEXT",
-                "value": "Minimal"
+                "value": "O1_Minimal"
             },
             "archetype_details": {
                 "archetype_id": {
