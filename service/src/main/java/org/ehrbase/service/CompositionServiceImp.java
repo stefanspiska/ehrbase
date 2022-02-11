@@ -180,6 +180,7 @@ public class CompositionServiceImp extends BaseServiceImp implements Composition
               Objects.requireNonNull(composition.getArchetypeDetails().getTemplateId()).getValue(),
               0,
               compositionAccess.getId(),
+              compositionAccess.getEhrid(),
               composition);
       compositionAccess.addContent(entryAccess);
       if (contributionId

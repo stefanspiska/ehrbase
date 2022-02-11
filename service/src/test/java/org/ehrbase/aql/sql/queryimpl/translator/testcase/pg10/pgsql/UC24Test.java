@@ -29,9 +29,7 @@ public class UC24Test extends UC24 {
     public UC24Test(){
         super();
         this.expectedSqlExpression =
-                "select cast(\"ehr\".\"js_composition\"(cast(cast(composition_join.id as uuid) as uuid), cast(? as text)) as varchar) as \"c\" \n" +
-                        "from \"ehr\".\"entry\" right outer join \"ehr\".\"composition\" as \"composition_join\" on \"composition_join\".\"id\" = \"ehr\".\"entry\".\"composition_id\"\n" +
-                        " where (\"ehr\".\"entry\".\"template_id\" = ? and ((\n" +
+                "select cast(\"ehr\".\"js_composition\"(cast(cast(composition_join.id as uuid) as uuid), cast(? as text)) as varchar) as \"c\" from \"ehr\".\"entry\" right outer join \"ehr\".\"composition\" as \"composition_join\" on (\"composition_join\".\"id\" = \"ehr\".\"entry\".\"composition_id\" and \"composition_join\".\"ehr_id\" = \"ehr\".\"entry\".\"ehr_id\") where (\"ehr\".\"entry\".\"template_id\" = ? and ((\n" +
                         "  select \"ehr\".\"entry\".\"entry\" #>> '{/composition[openEHR-EHR-COMPOSITION.health_summary.v1],/content[openEHR-EHR-ADMIN_ENTRY.hospitalization.v0],0}' \n" +
                         ")IS  NULL ))";
     }

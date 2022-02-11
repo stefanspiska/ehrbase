@@ -87,9 +87,9 @@ public class EntryAccess extends DataAccess implements I_EntryAccess {
      * @param compositionId Linked composition ID
      * @param composition   Object representation of linked composition
      */
-    public EntryAccess(I_DomainAccess domainAccess, String templateId, Integer sequence, UUID compositionId, Composition composition) {
+    public EntryAccess(I_DomainAccess domainAccess, String templateId, Integer sequence, UUID compositionId, UUID ehrId, Composition composition) {
         super(domainAccess.getContext(), domainAccess.getKnowledgeManager(), domainAccess.getIntrospectService(), domainAccess.getServerConfig());
-        setFields(templateId, sequence, compositionId, composition);
+        setFields(templateId, sequence, compositionId, ehrId, composition);
     }
 
     private EntryAccess(I_DomainAccess domainAccess) {
@@ -313,13 +313,14 @@ public class EntryAccess extends DataAccess implements I_EntryAccess {
      * @param compositionId ID of composition
      * @param composition   {@link Composition} object with more information for the entry
      */
-    private void setFields(String templateId, Integer sequence, UUID compositionId, Composition composition) {
+    private void setFields(String templateId, Integer sequence, UUID compositionId, UUID ehrId, Composition composition) {
 
         entryRecord = getContext().newRecord(ENTRY);
 
         entryRecord.setTemplateId(templateId);
         entryRecord.setSequence(sequence);
         entryRecord.setCompositionId(compositionId);
+        entryRecord.setEhrId(ehrId);
         entryRecord.setRmVersion(composition.getArchetypeDetails().getRmVersion());
         new RecordedDvCodedText().toDB(entryRecord, ENTRY.CATEGORY, composition.getCategory());
         setCompositionFields(entryRecord, composition);
@@ -342,6 +343,7 @@ public class EntryAccess extends DataAccess implements I_EntryAccess {
                 .insertInto(ENTRY,
                         ENTRY.SEQUENCE,
                         ENTRY.COMPOSITION_ID,
+                        ENTRY.EHR_ID,
                         ENTRY.TEMPLATE_ID,
                         ENTRY.ITEM_TYPE,
                         ENTRY.ARCHETYPE_ID,
@@ -352,6 +354,7 @@ public class EntryAccess extends DataAccess implements I_EntryAccess {
                         ENTRY.RM_VERSION)
                 .values(DSL.val(getSequence()),
                         DSL.val(getCompositionId()),
+                        DSL.val(getEhrId()),
                         DSL.val(getTemplateId()),
                         DSL.val(EntryType.valueOf(getItemType())),
                         DSL.val(getArchetypeId()),
@@ -468,6 +471,11 @@ public class EntryAccess extends DataAccess implements I_EntryAccess {
     @Override
     public UUID getCompositionId() {
         return entryRecord.getCompositionId();
+    }
+
+    @Override
+    public UUID getEhrId() {
+        return entryRecord.getEhrId();
     }
 
     @Override

@@ -31,11 +31,7 @@ public class UC14Test extends UC14 {
     public UC14Test(){
         super();
         this.expectedSqlExpression =
-                "select \"composer_ref\".\"name\" as \"/composer/name\"" +
-                        " from \"ehr\".\"entry\" right outer join \"ehr\".\"composition\" as \"composition_join\"" +
-                        " on \"composition_join\".\"id\" = \"ehr\".\"entry\".\"composition_id\" join \"ehr\".\"party_identified\" as \"composer_ref\"" +
-                        " on \"composition_join\".\"composer\" = \"composer_ref\".\"id\"" +
-                        " where (1 = 0)";
+                "select \"composer_ref\".\"name\" as \"/composer/name\" from \"ehr\".\"entry\" right outer join \"ehr\".\"composition\" as \"composition_join\" on (\"composition_join\".\"id\" = \"ehr\".\"entry\".\"composition_id\" and \"composition_join\".\"ehr_id\" = \"ehr\".\"entry\".\"ehr_id\") join \"ehr\".\"party_identified\" as \"composer_ref\" on \"composition_join\".\"composer\" = \"composer_ref\".\"id\" where (1 = 0)";
     }
 
     @Test

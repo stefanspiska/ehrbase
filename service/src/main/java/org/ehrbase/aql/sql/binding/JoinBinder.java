@@ -76,9 +76,6 @@ public class JoinBinder implements IJoinBinder {
      */
     public SelectQuery<?> addJoinClause(SelectQuery<?> selectQuery) {
 
-        //force to join with subject for sharding (should be a runtime option)
-//        joinSetup.setJoinEhr(true);
-
         if (joinSetup == null)
             return selectQuery;
 
@@ -165,14 +162,17 @@ public class JoinBinder implements IJoinBinder {
     private void joinComposition(SelectQuery<?> selectQuery) {
         if (compositionJoined)
             return;
-        selectQuery.addJoin(compositionRecordTable, JoinType.RIGHT_OUTER_JOIN, DSL.field(compositionRecordTable.field(COMPOSITION.ID)).eq(ENTRY.COMPOSITION_ID));
+        selectQuery.addJoin(compositionRecordTable, JoinType.RIGHT_OUTER_JOIN,
+                DSL.field(compositionRecordTable.field(COMPOSITION.ID)).eq(ENTRY.COMPOSITION_ID).
+                        and(compositionRecordTable.field(COMPOSITION.EHR_ID).eq(ENTRY.EHR_ID)));
         compositionJoined = true;
     }
 
     private void joinSystem(SelectQuery<?> selectQuery) {
         if (systemJoined)
             return;
-        selectQuery.addJoin(systemRecordTable, JoinType.RIGHT_OUTER_JOIN, DSL.field(systemRecordTable.field(SYSTEM.ID)).eq(DSL.field(ehrRecordTable.field(EHR_.SYSTEM_ID.getName(), UUID.class))));
+        selectQuery.addJoin(systemRecordTable, JoinType.RIGHT_OUTER_JOIN,
+                DSL.field(systemRecordTable.field(SYSTEM.ID)).eq(DSL.field(ehrRecordTable.field(EHR_.SYSTEM_ID.getName(), UUID.class))));
         systemJoined = true;
     }
 
@@ -181,8 +181,7 @@ public class JoinBinder implements IJoinBinder {
         if (joinSetup.isJoinComposition() || joinSetup.isUseEntry()) {
             joinComposition(selectQuery);
             selectQuery.addJoin(statusRecordTable,
-                    DSL.field(statusRecordTable.field(STATUS.EHR_ID.getName(), UUID.class))
-                            .eq(DSL.field(compositionRecordTable.field(COMPOSITION.EHR_ID.getName(), UUID.class))));
+                    DSL.field(statusRecordTable.field(STATUS.EHR_ID.getName(), UUID.class)).eq(DSL.field(compositionRecordTable.field(COMPOSITION.EHR_ID.getName(), UUID.class))));
             statusJoined = true;
         } else {//assume it is joined on EHR
             if (joinSetup.isJoinEhr())
@@ -206,7 +205,8 @@ public class JoinBinder implements IJoinBinder {
 
     private void joinEventContext(SelectQuery<?> selectQuery) {
         if (eventContextJoined) return;
-        selectQuery.addJoin(EVENT_CONTEXT, EVENT_CONTEXT.COMPOSITION_ID.eq(ENTRY.COMPOSITION_ID));
+        selectQuery.addJoin(EVENT_CONTEXT, EVENT_CONTEXT.COMPOSITION_ID.eq(ENTRY.COMPOSITION_ID).
+                and(EVENT_CONTEXT.EHR_ID.eq(ENTRY.EHR_ID)));
         eventContextJoined = true;
     }
 

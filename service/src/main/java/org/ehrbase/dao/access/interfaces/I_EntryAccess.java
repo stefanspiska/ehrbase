@@ -50,8 +50,8 @@ public interface I_EntryAccess extends I_SimpleCRUD {
      * @return an access layer instance
      * @see Composition
      */
-    static I_EntryAccess getNewInstance(I_DomainAccess domain, String templateId, Integer sequence, UUID compositionId, Composition composition) {
-        return new EntryAccess(domain, templateId, sequence, compositionId, composition);
+    static I_EntryAccess getNewInstance(I_DomainAccess domain, String templateId, Integer sequence, UUID compositionId, UUID ehrId, Composition composition) {
+        return new EntryAccess(domain, templateId, sequence, compositionId, ehrId, composition);
     }
 
     /**
@@ -141,6 +141,8 @@ public interface I_EntryAccess extends I_SimpleCRUD {
      * @return composition ID as {@link UUID}
      */
     UUID getCompositionId();
+
+    UUID getEhrId();
 
     /**
      * set the owner composition by its Id

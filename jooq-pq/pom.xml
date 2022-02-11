@@ -69,6 +69,9 @@
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-maven-plugin</artifactId>
                 <configuration>
+                    <!-- make sure the migrations are performed from the commandline. NOT SUPPORTED IN COMMUNITY EDITION  -->
+<!--                    <skipExecutingMigrations>true</skipExecutingMigrations>-->
+                    <baselineOnMigrate>true</baselineOnMigrate>
                     <locations>
                         <location>classpath:db/migration</location>
                     </locations>
@@ -105,9 +108,10 @@
                                 Depending on your database, this might be important! You can storeComposition case-insensitive
                                 regular expressions using this syntax: (?i:expr) -->
                             <includes></includes>
-                            <!-- All elements that are excluded fromBinder your schema (A Java regular expression.
-                                Use the pipe to separate several expressions). Excludes match before includes -->
-                            <excludes></excludes>
+                            <!-- Excludes the distributed tables matchin CITUS 10.2 pattern. F.e. ehr-102333 -->
+                            <excludes>
+                                ^.*(_102).*
+                            </excludes>
                             <!-- The schema that is used locally as a source for meta information.
                                 This could be your development schema or the production schema, etc This
                                 cannot be combined with the schemata element. If left empty, jOOQ will generate

@@ -15,7 +15,7 @@
 # limitations under the License.
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5433/ehrbase
+    url: jdbc:postgresql://192.168.0.18:5432/ehrbase
     username: ehrbase
     password: ehrbase
     tomcat:

@@ -251,6 +251,7 @@ public class CompositionAccess extends DataAccess implements I_CompositionAccess
             I_ContextAccess contextAccess = I_ContextAccess.getInstance(this, eventContext);
             if (!contextAccess.isVoid()) {
                 contextAccess.setCompositionId(compositionRecord.getId());
+                contextAccess.setEhrId(compositionRecord.getEhrId());
                 contextAccess.commit(Timestamp.valueOf(timestamp));
             }
         }
@@ -789,6 +790,7 @@ public class CompositionAccess extends DataAccess implements I_CompositionAccess
     public void setContextCompositionId(UUID contextId) {
         I_ContextAccess contextAccess = I_ContextAccess.retrieveInstance(this, contextId);
         contextAccess.setCompositionId(compositionRecord.getId());
+        contextAccess.setEhrId(compositionRecord.getEhrId());
         contextAccess.update(TransactionTime.millis());
     }
 

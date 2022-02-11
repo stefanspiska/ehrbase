@@ -27,10 +27,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.ehrbase.aql.definition.I_VariableDefinition;
 import org.ehrbase.aql.sql.PathResolver;
 import org.ehrbase.dao.access.interfaces.I_DomainAccess;
+import org.ehrbase.jooq.pg.Routines;
 import org.ehrbase.service.IntrospectService;
 import org.jooq.DataType;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
+import org.jooq.types.YearToSecond;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +42,7 @@ import java.util.List;
 import java.util.Set;
 
 import static org.ehrbase.aql.sql.queryimpl.QueryImplConstants.AQL_NODE_ITERATIVE_MARKER;
+import static org.ehrbase.jooq.pg.Routines.castAsInterval;
 import static org.ehrbase.jooq.pg.Tables.ENTRY;
 
 /**
@@ -230,7 +233,12 @@ public class JsonbEntryQuery extends ObjectQuery implements IQueryImpl {
         Field fieldPathItem;
 
         if (castTypeAs != null) {
-            fieldPathItem = DSL.field(itemPath, String.class).cast(castTypeAs).as(alias);
+            if (castTypeAs.getCastTypeName().equalsIgnoreCase("INTERVAL")) {
+                //this is required as CAST AS INTERVAL is not immutable (timezone dependent)
+                fieldPathItem = DSL.field("ehr.cast_as_interval("+itemPath+")", String.class).as(alias);
+            }
+            else
+                fieldPathItem = DSL.field(itemPath, String.class).cast(castTypeAs).as(alias);
         }
         else {
             fieldPathItem = DSL.field(itemPath, String.class).as(alias);

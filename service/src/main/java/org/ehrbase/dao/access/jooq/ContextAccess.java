@@ -277,6 +277,7 @@ public class ContextAccess extends DataAccess implements I_ContextAccess {
         InsertQuery<?> insertQuery = getContext().insertQuery(EVENT_CONTEXT);
         insertQuery.addValue(EVENT_CONTEXT.ID, eventContextRecord.getId());
         insertQuery.addValue(EVENT_CONTEXT.COMPOSITION_ID, eventContextRecord.getCompositionId());
+        insertQuery.addValue(EVENT_CONTEXT.EHR_ID, eventContextRecord.getEhrId());
         insertQuery.addValue(EVENT_CONTEXT.START_TIME, eventContextRecord.getStartTime());
         insertQuery.addValue(EVENT_CONTEXT.START_TIME_TZID, eventContextRecord.getStartTimeTzid());
         insertQuery.addValue(EVENT_CONTEXT.END_TIME, eventContextRecord.getEndTime());
@@ -520,6 +521,11 @@ public class ContextAccess extends DataAccess implements I_ContextAccess {
     @Override
     public void setCompositionId(UUID compositionId) {
         eventContextRecord.setCompositionId(compositionId);
+    }
+
+    @Override
+    public void setEhrId(UUID ehrId) {
+        eventContextRecord.setEhrId(ehrId);
     }
 
     @Override

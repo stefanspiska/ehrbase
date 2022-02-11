@@ -110,6 +110,13 @@ public interface I_ContextAccess extends I_SimpleCRUD {
 
     void setCompositionId(UUID compositionId);
 
+    /**
+     * used only for sharding!
+     * @param compositionId
+     */
+    void setEhrId(UUID compositionId);
+
+
     UUID getId();
 
     boolean isVoid();

@@ -36,7 +36,13 @@
 --   - replaced all VARCHAR with TEXT (because our tzid is longer than what fits)
 --
 -- 20220126 CCH: refactored all migrations to be in one, removed unnecessary objects
-
+-- This migration approach focuses on essential DDL commands that define the DB structure:
+-- - types
+-- - tables
+-- - functions
+-- other deployment specifics such as indexes and triggers should be defined elsewhere
+-- since they have no impact on code generation, but these are operational entities
+--
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
@@ -117,6 +123,10 @@ CREATE TYPE ehr.party_type AS ENUM (
     );
 ALTER TYPE ehr.party_type OWNER TO ehrbase;
 
+-- create a dummy type for checking citus presence at runtime
+CREATE TYPE ehr.citus_usage_type AS ENUM (
+    'true'
+    );
 
 -- EHRbase Functions
 
@@ -1730,7 +1740,7 @@ $_$;
 ALTER FUNCTION ehr.js_concept(uuid) OWNER TO ehrbase;
 
 CREATE FUNCTION ehr.js_context(uuid) RETURNS json
-    LANGUAGE plpgsql
+    LANGUAGE plpgsql IMMUTABLE
 AS
 $_$
 DECLARE
@@ -2551,7 +2561,7 @@ $$;
 ALTER FUNCTION ehr.json_party_self(refid uuid, namespace text, ref_type text, scheme text, id_value text, objectid_type ehr.party_ref_id_type) OWNER TO ehrbase;
 
 CREATE FUNCTION ehr.jsonb_array_elements(jsonb_val jsonb) RETURNS SETOF jsonb
-    LANGUAGE plpgsql
+    LANGUAGE plpgsql IMMUTABLE
 AS
 $$
 BEGIN
@@ -2561,7 +2571,7 @@ $$;
 ALTER FUNCTION ehr.jsonb_array_elements(jsonb_val jsonb) OWNER TO ehrbase;
 
 CREATE FUNCTION ehr.jsonb_extract_path(from_json jsonb, VARIADIC path_elems text[]) RETURNS jsonb
-    LANGUAGE plpgsql
+    LANGUAGE plpgsql IMMUTABLE
 AS
 $$
 BEGIN
@@ -2571,7 +2581,7 @@ $$;
 ALTER FUNCTION ehr.jsonb_extract_path(from_json jsonb, VARIADIC path_elems text[]) OWNER TO ehrbase;
 
 CREATE FUNCTION ehr.jsonb_extract_path_text(from_json jsonb, VARIADIC path_elems text[]) RETURNS text
-    LANGUAGE plpgsql
+    LANGUAGE plpgsql IMMUTABLE
 AS
 $$
 BEGIN
@@ -2579,6 +2589,16 @@ BEGIN
 END
 $$;
 ALTER FUNCTION ehr.jsonb_extract_path_text(from_json jsonb, VARIADIC path_elems text[]) OWNER TO ehrbase;
+
+-- use this to perform CAST AS INTERVAL
+-- this function replaces standard call to CAST as it is not immutable (depends on timezone)
+CREATE FUNCTION ehr.cast_as_interval(TEXT) RETURNS INTERVAL
+AS 'select cast($1 as INTERVAL)'
+    LANGUAGE SQL
+    IMMUTABLE
+    RETURNS NULL ON NULL INPUT;
+
+ALTER FUNCTION ehr.cast_as_interval(TEXT) OWNER TO ehrbase;
 
 CREATE FUNCTION ehr.map_change_type_to_codestring(literal text) RETURNS text
     LANGUAGE plpgsql
@@ -2971,7 +2991,7 @@ ALTER FUNCTION ehr.tr_function_delete_folder_item() OWNER TO ehrbase;
 COMMENT ON FUNCTION ehr.tr_function_delete_folder_item() IS 'fires after deletion of folder_items when the corresponding Object_ref  needs to be deleted.';
 
 CREATE FUNCTION ehr.xjsonb_array_elements(entry jsonb) RETURNS SETOF jsonb
-    LANGUAGE plpgsql
+    LANGUAGE plpgsql IMMUTABLE
 AS
 $$
 BEGIN
@@ -3731,109 +3751,6 @@ ALTER TABLE ONLY ehr.composition
 
 COMMENT ON TABLE ehr.territory IS 'ISO 3166-1 countries codeset';
 
--- TRIGGERS and INDEXES
-CREATE INDEX attestation_reference_idx ON ehr.attestation USING btree (reference);
-CREATE INDEX attested_view_attestation_idx ON ehr.attested_view USING btree (attestation_id);
-CREATE INDEX compo_xref_child_idx ON ehr.compo_xref USING btree (child_uuid);
-CREATE INDEX composition_composer_idx ON ehr.composition USING btree (composer);
-CREATE INDEX composition_ehr_idx ON ehr.composition USING btree (ehr_id);
-CREATE INDEX composition_history_ehr_idx ON ehr.composition_history USING btree (ehr_id);
-CREATE INDEX context_composition_id_idx ON ehr.event_context USING btree (composition_id);
-CREATE INDEX context_facility_idx ON ehr.event_context USING btree (facility);
-CREATE INDEX context_participation_index ON ehr.participation USING btree (event_context);
-CREATE INDEX context_setting_idx ON ehr.event_context USING btree (setting);
-CREATE INDEX contribution_ehr_idx ON ehr.contribution USING btree (ehr_id);
-CREATE INDEX ehr_compo_xref ON ehr.compo_xref USING btree (master_uuid);
-CREATE INDEX ehr_composition_history ON ehr.composition_history USING btree (id);
-CREATE INDEX ehr_entry_history ON ehr.entry_history USING btree (id);
-CREATE INDEX ehr_event_context_history ON ehr.event_context_history USING btree (id);
-CREATE UNIQUE INDEX ehr_folder_idx ON ehr.ehr USING btree (directory);
-CREATE INDEX ehr_participation_history ON ehr.participation_history USING btree (id);
-CREATE INDEX ehr_status_history ON ehr.status_history USING btree (id);
-
-CREATE INDEX ehr_subject_id_index ON ehr.party_identified USING btree (jsonb_extract_path_text(
-                                                                               (ehr.js_party_ref(party_ref_value,
-                                                                                                 party_ref_scheme,
-                                                                                                 party_ref_namespace,
-                                                                                                 party_ref_type))::jsonb,
-                                                                               VARIADIC
-                                                                               ARRAY ['id'::text, 'value'::text]));
-
-CREATE INDEX entry_composition_id_idx ON ehr.entry USING btree (composition_id);
-CREATE INDEX entry_history_composition_idx ON ehr.entry_history USING btree (composition_id);
-CREATE INDEX event_context_history_composition_idx ON ehr.event_context_history USING btree (composition_id);
-CREATE INDEX fki_folder_hierarchy_parent_fk ON ehr.folder_hierarchy USING btree (parent_folder);
-CREATE INDEX folder_hierarchy_history_contribution_idx ON ehr.folder_hierarchy_history USING btree (in_contribution);
-CREATE INDEX folder_hierarchy_in_contribution_idx ON ehr.folder_hierarchy USING btree (in_contribution);
-CREATE INDEX folder_hist_idx ON ehr.folder_items_history USING btree (folder_id, object_ref_id, in_contribution);
-CREATE INDEX folder_history_contribution_idx ON ehr.folder_history USING btree (in_contribution);
-CREATE INDEX folder_in_contribution_idx ON ehr.folder USING btree (in_contribution);
-CREATE INDEX folder_items_contribution_idx ON ehr.folder_items USING btree (in_contribution);
-CREATE INDEX folder_items_history_contribution_idx ON ehr.folder_items_history USING btree (in_contribution);
-CREATE INDEX gin_entry_path_idx ON ehr.entry USING gin (entry jsonb_path_ops);
-CREATE INDEX obj_ref_in_contribution_idx ON ehr.object_ref USING btree (in_contribution);
-CREATE INDEX object_ref_history_contribution_idx ON ehr.object_ref_history USING btree (in_contribution);
-CREATE INDEX participation_history_event_context_idx ON ehr.participation_history USING btree (event_context);
-CREATE INDEX party_identified_party_ref_idx ON ehr.party_identified USING btree (party_ref_namespace, party_ref_scheme, party_ref_value);
-CREATE INDEX party_identified_party_type_idx ON ehr.party_identified USING btree (party_type, name);
-CREATE INDEX status_ehr_idx ON ehr.status USING btree (ehr_id);
-CREATE INDEX status_history_ehr_idx ON ehr.status_history USING btree (ehr_id);
-CREATE INDEX status_party_idx ON ehr.status USING btree (party);
-CREATE INDEX template_entry_idx ON ehr.entry USING btree (template_id);
-CREATE UNIQUE INDEX territory_code_index ON ehr.territory USING btree (code);
-
--- TRIGGERS
-
-CREATE TRIGGER tr_folder_item_delete
-    AFTER DELETE
-    ON ehr.folder_items
-    FOR EACH ROW
-EXECUTE FUNCTION ehr.tr_function_delete_folder_item();
-CREATE TRIGGER versioning_trigger
-    BEFORE INSERT OR DELETE OR UPDATE
-    ON ehr.composition
-    FOR EACH ROW
-EXECUTE FUNCTION ext.versioning('sys_period', 'ehr.composition_history', 'true');
-CREATE TRIGGER versioning_trigger
-    BEFORE INSERT OR DELETE OR UPDATE
-    ON ehr.entry
-    FOR EACH ROW
-EXECUTE FUNCTION ext.versioning('sys_period', 'ehr.entry_history', 'true');
-CREATE TRIGGER versioning_trigger
-    BEFORE INSERT OR DELETE OR UPDATE
-    ON ehr.event_context
-    FOR EACH ROW
-EXECUTE FUNCTION ext.versioning('sys_period', 'ehr.event_context_history', 'true');
-CREATE TRIGGER versioning_trigger
-    BEFORE INSERT OR DELETE OR UPDATE
-    ON ehr.folder
-    FOR EACH ROW
-EXECUTE FUNCTION ext.versioning('sys_period', 'ehr.folder_history', 'true');
-CREATE TRIGGER versioning_trigger
-    BEFORE INSERT OR DELETE OR UPDATE
-    ON ehr.folder_hierarchy
-    FOR EACH ROW
-EXECUTE FUNCTION ext.versioning('sys_period', 'ehr.folder_hierarchy_history', 'true');
-CREATE TRIGGER versioning_trigger
-    BEFORE INSERT OR DELETE OR UPDATE
-    ON ehr.folder_items
-    FOR EACH ROW
-EXECUTE FUNCTION ext.versioning('sys_period', 'ehr.folder_items_history', 'true');
-CREATE TRIGGER versioning_trigger
-    BEFORE INSERT OR DELETE OR UPDATE
-    ON ehr.object_ref
-    FOR EACH ROW
-EXECUTE FUNCTION ext.versioning('sys_period', 'ehr.object_ref_history', 'true');
-CREATE TRIGGER versioning_trigger
-    BEFORE INSERT OR DELETE OR UPDATE
-    ON ehr.participation
-    FOR EACH ROW
-EXECUTE FUNCTION ext.versioning('sys_period', 'ehr.participation_history', 'true');
-CREATE TRIGGER versioning_trigger
-    BEFORE INSERT OR DELETE OR UPDATE
-    ON ehr.status
-    FOR EACH ROW
-EXECUTE FUNCTION ext.versioning('sys_period', 'ehr.status_history', 'true');
 
 -- BUILT-IN
 GRANT ALL ON FUNCTION ext.uuid_generate_v1() TO ehrbase;
@@ -3846,3 +3763,7 @@ GRANT ALL ON FUNCTION ext.uuid_ns_dns() TO ehrbase;
 GRANT ALL ON FUNCTION ext.uuid_ns_oid() TO ehrbase;
 GRANT ALL ON FUNCTION ext.uuid_ns_url() TO ehrbase;
 GRANT ALL ON FUNCTION ext.uuid_ns_x500() TO ehrbase;
+
+-- Seems this is required when running the migration from the command line
+GRANT ALL PRIVILEGES ON SCHEMA ehr TO ehrbase;
+GRANT ALL PRIVILEGES ON TABLE ehr.flyway_schema_history TO ehrbase;
