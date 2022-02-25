@@ -21,7 +21,6 @@ import org.ehrbase.aql.sql.queryimpl.attribute.eventcontext.SimpleEventContextAt
 import org.jooq.Field;
 import org.jooq.JSONB;
 import org.jooq.TableField;
-import org.jooq.impl.DSL;
 
 import static org.ehrbase.aql.sql.queryimpl.AqlRoutines.jsonpathItemAsText;
 import static org.ehrbase.aql.sql.queryimpl.AqlRoutines.jsonpathParameters;

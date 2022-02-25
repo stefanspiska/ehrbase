@@ -24,6 +24,7 @@ package org.ehrbase.dao.access.interfaces;
 import com.nedap.archie.rm.composition.Composition;
 import org.ehrbase.api.exception.InternalServerException;
 import org.ehrbase.dao.access.jooq.EntryAccess;
+import org.ehrbase.jooq.pg.udt.DvCodedText;
 import org.ehrbase.jooq.pg.udt.records.DvCodedTextRecord;
 import org.jooq.JSONB;
 
@@ -131,7 +132,7 @@ public interface I_EntryAccess extends I_SimpleCRUD {
      * get the entry category record id<br>
      * Category attribute is a DvCodedText
      *
-     * @return {@link org.ehrbase.jooq.pg.udt.DvCodedText} of category concept
+     * @return {@link DvCodedText} of category concept
      */
     DvCodedTextRecord getCategory();
 

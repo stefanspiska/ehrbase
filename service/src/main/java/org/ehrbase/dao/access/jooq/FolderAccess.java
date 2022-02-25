@@ -37,11 +37,16 @@ import org.ehrbase.jooq.binding.OtherDetailsJsonbBinder;
 import org.ehrbase.jooq.binding.SysPeriodBinder;
 import org.ehrbase.jooq.pg.enums.ContributionDataType;
 import org.ehrbase.jooq.pg.tables.FolderHierarchy;
-import org.ehrbase.jooq.pg.tables.records.*;
 import org.joda.time.DateTime;
 import org.jooq.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.ehrbase.jooq.pg.tables.records.ContributionRecord;
+import org.ehrbase.jooq.pg.tables.records.FolderHierarchyRecord;
+import org.ehrbase.jooq.pg.tables.records.FolderHistoryRecord;
+import org.ehrbase.jooq.pg.tables.records.FolderItemsRecord;
+import org.ehrbase.jooq.pg.tables.records.FolderRecord;
+import org.ehrbase.jooq.pg.tables.records.ObjectRefRecord;
 
 import java.sql.Timestamp;
 import java.time.Instant;

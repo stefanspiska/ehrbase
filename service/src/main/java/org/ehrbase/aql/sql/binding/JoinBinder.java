@@ -23,12 +23,16 @@ package org.ehrbase.aql.sql.binding;
 
 import org.ehrbase.aql.sql.queryimpl.attribute.JoinSetup;
 import org.ehrbase.dao.access.interfaces.I_DomainAccess;
-import org.ehrbase.jooq.pg.tables.records.*;
 import org.jooq.Field;
 import org.jooq.JoinType;
 import org.jooq.SelectQuery;
 import org.jooq.Table;
 import org.jooq.impl.DSL;
+import org.ehrbase.jooq.pg.tables.records.CompositionRecord;
+import org.ehrbase.jooq.pg.tables.records.EhrRecord;
+import org.ehrbase.jooq.pg.tables.records.PartyIdentifiedRecord;
+import org.ehrbase.jooq.pg.tables.records.StatusRecord;
+import org.ehrbase.jooq.pg.tables.records.SystemRecord;
 
 import java.util.List;
 import java.util.UUID;

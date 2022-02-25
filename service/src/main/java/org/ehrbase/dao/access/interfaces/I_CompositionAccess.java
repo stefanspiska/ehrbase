@@ -29,10 +29,17 @@ import org.ehrbase.api.exception.ObjectNotFoundException;
 import org.ehrbase.dao.access.jooq.CompositionAccess;
 import com.nedap.archie.rm.composition.Composition;
 import com.nedap.archie.rm.composition.EventContext;
-import org.ehrbase.jooq.pg.tables.records.*;
 import org.jooq.Result;
 import org.jooq.Table;
 import org.jooq.exception.DataAccessException;
+import org.ehrbase.jooq.pg.tables.records.CompositionHistoryRecord;
+import org.ehrbase.jooq.pg.tables.records.CompositionRecord;
+import org.ehrbase.jooq.pg.tables.records.ConceptRecord;
+import org.ehrbase.jooq.pg.tables.records.EventContextRecord;
+import org.ehrbase.jooq.pg.tables.records.IdentifierRecord;
+import org.ehrbase.jooq.pg.tables.records.ParticipationRecord;
+import org.ehrbase.jooq.pg.tables.records.PartyIdentifiedRecord;
+import org.ehrbase.jooq.pg.tables.records.TerritoryRecord;
 
 import java.sql.Timestamp;
 import java.util.List;

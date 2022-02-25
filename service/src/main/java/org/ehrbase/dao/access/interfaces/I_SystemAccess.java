@@ -23,7 +23,6 @@ package org.ehrbase.dao.access.interfaces;
 
 import org.ehrbase.api.exception.InternalServerException;
 import org.ehrbase.dao.access.jooq.SystemAccess;
-import org.jooq.meta.derby.sys.Sys;
 
 import java.util.UUID;
 

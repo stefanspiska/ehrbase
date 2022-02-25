@@ -24,7 +24,6 @@ import org.ehrbase.dao.access.interfaces.I_DomainAccess;
 import org.ehrbase.jooq.pg.tables.records.PartyIdentifiedRecord;
 
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static org.ehrbase.jooq.pg.Tables.IDENTIFIER;

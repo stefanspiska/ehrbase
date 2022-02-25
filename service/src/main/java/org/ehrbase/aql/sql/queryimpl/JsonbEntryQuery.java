@@ -27,12 +27,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.ehrbase.aql.definition.I_VariableDefinition;
 import org.ehrbase.aql.sql.PathResolver;
 import org.ehrbase.dao.access.interfaces.I_DomainAccess;
-import org.ehrbase.jooq.pg.Routines;
 import org.ehrbase.service.IntrospectService;
 import org.jooq.DataType;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
-import org.jooq.types.YearToSecond;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

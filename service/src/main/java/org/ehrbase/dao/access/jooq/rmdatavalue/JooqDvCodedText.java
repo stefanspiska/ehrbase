@@ -1,6 +1,5 @@
 package org.ehrbase.dao.access.jooq.rmdatavalue;
 
-import com.nedap.archie.rm.datatypes.CodePhrase;
 import com.nedap.archie.rm.datavalues.DvCodedText;
 import org.ehrbase.jooq.pg.udt.records.CodePhraseRecord;
 import org.ehrbase.jooq.pg.udt.records.DvCodedTextRecord;

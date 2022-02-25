@@ -5,9 +5,13 @@ import org.ehrbase.jooq.pg.Routines;
 import org.ehrbase.jooq.pg.tables.AdminDeleteCompositionHistory;
 import org.ehrbase.jooq.pg.tables.AdminDeleteFolderHistory;
 import org.ehrbase.jooq.pg.tables.AdminDeleteFolderObjRefHistory;
-import org.ehrbase.jooq.pg.tables.records.*;
 import org.jooq.DSLContext;
 import org.jooq.Result;
+import org.ehrbase.jooq.pg.tables.records.AdminDeleteAttestationRecord;
+import org.ehrbase.jooq.pg.tables.records.AdminDeleteAuditRecord;
+import org.ehrbase.jooq.pg.tables.records.AdminDeleteCompositionRecord;
+import org.ehrbase.jooq.pg.tables.records.AdminDeleteContributionRecord;
+import org.ehrbase.jooq.pg.tables.records.AdminDeleteFolderRecord;
 
 import java.util.HashSet;
 import java.util.Objects;

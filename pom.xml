@@ -344,71 +344,71 @@
                         </execution>
                     </executions>
                 </plugin>
-                <plugin>
+<!--                <plugin>-->
 
-                    <!-- Specify the maven code generator plugin -->
-                    <!-- Use org.jooq            for the Open Source Edition
-                             org.jooq.pro        for commercial editions,
-                             org.jooq.pro-java-6 for commercial editions with Java 6 support,
-                             org.jooq.trial      for the free trial edition
+<!--                    &lt;!&ndash; Specify the maven code generator plugin &ndash;&gt;-->
+<!--                    &lt;!&ndash; Use org.jooq            for the Open Source Edition-->
+<!--                             org.jooq.pro        for commercial editions,-->
+<!--                             org.jooq.pro-java-6 for commercial editions with Java 6 support,-->
+<!--                             org.jooq.trial      for the free trial edition-->
 
-                         Note: Only the Open Source Edition is hosted on Maven Central.
-                               Import the others manually from your distribution -->
-                    <groupId>org.jooq</groupId>
-                    <artifactId>jooq-codegen-maven</artifactId>
-                    <version>${jooq.version}</version>
+<!--                         Note: Only the Open Source Edition is hosted on Maven Central.-->
+<!--                               Import the others manually from your distribution &ndash;&gt;-->
+<!--                    <groupId>org.jooq</groupId>-->
+<!--                    <artifactId>jooq-codegen-maven</artifactId>-->
+<!--                    <version>${jooq.version}</version>-->
 
-                    <!-- The plugin should hook into the generate goal -->
-                    <executions>
-                        <execution>
-                            <phase>generate-sources</phase>
-                            <goals>
-                                <goal>generate</goal>
-                            </goals>
-                        </execution>
-                    </executions>
+<!--                    &lt;!&ndash; The plugin should hook into the generate goal &ndash;&gt;-->
+<!--                    <executions>-->
+<!--                        <execution>-->
+<!--                            <phase>generate-sources</phase>-->
+<!--                            <goals>-->
+<!--                                <goal>generate</goal>-->
+<!--                            </goals>-->
+<!--                        </execution>-->
+<!--                    </executions>-->
 
-                    <!-- Manage the plugin's dependency. In this example, we'll use a PostgreSQL database -->
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.postgresql</groupId>
-                            <artifactId>postgresql</artifactId>
-                            <version>${postgressql.version}</version>
-                        </dependency>
-                    </dependencies>
+<!--                    &lt;!&ndash; Manage the plugin's dependency. In this example, we'll use a PostgreSQL database &ndash;&gt;-->
+<!--                    <dependencies>-->
+<!--                        <dependency>-->
+<!--                            <groupId>org.postgresql</groupId>-->
+<!--                            <artifactId>postgresql</artifactId>-->
+<!--                            <version>${postgressql.version}</version>-->
+<!--                        </dependency>-->
+<!--                    </dependencies>-->
 
-                    <!-- Specify the plugin configuration.
-                         The configuration format is the same as for the standalone code generator -->
-                    <configuration>
-                        <!-- Configure the database connection here -->
-                        <jdbc>
-                            <driver>org.postgresql.Driver</driver>
-                            <url>jdbc:postgresql://${database.host}:${database.port}/${database.name}</url>
-                            <user>${database.user}</user>
-                            <password>${database.pass}</password>
-                        </jdbc>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.flywaydb</groupId>
-                    <artifactId>flyway-maven-plugin</artifactId>
-                    <version>${flyway.version}</version>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.postgresql</groupId>
-                            <artifactId>postgresql</artifactId>
-                            <version>${postgressql.version}</version>
-                        </dependency>
-                    </dependencies>
-                    <executions>
-                        <execution>
-                            <phase>generate-sources</phase>
-                            <goals>
-                                <goal>migrate</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
+<!--                    &lt;!&ndash; Specify the plugin configuration.-->
+<!--                         The configuration format is the same as for the standalone code generator &ndash;&gt;-->
+<!--                    <configuration>-->
+<!--                        &lt;!&ndash; Configure the database connection here &ndash;&gt;-->
+<!--                        <jdbc>-->
+<!--                            <driver>org.postgresql.Driver</driver>-->
+<!--                            <url>jdbc:postgresql://${database.host}:${database.port}/${database.name}</url>-->
+<!--                            <user>${database.user}</user>-->
+<!--                            <password>${database.pass}</password>-->
+<!--                        </jdbc>-->
+<!--                    </configuration>-->
+<!--                </plugin>-->
+<!--                <plugin>-->
+<!--                    <groupId>org.flywaydb</groupId>-->
+<!--                    <artifactId>flyway-maven-plugin</artifactId>-->
+<!--                    <version>${flyway.version}</version>-->
+<!--                    <dependencies>-->
+<!--                        <dependency>-->
+<!--                            <groupId>org.postgresql</groupId>-->
+<!--                            <artifactId>postgresql</artifactId>-->
+<!--                            <version>${postgressql.version}</version>-->
+<!--                        </dependency>-->
+<!--                    </dependencies>-->
+<!--                    <executions>-->
+<!--                        <execution>-->
+<!--                            <phase>generate-sources</phase>-->
+<!--                            <goals>-->
+<!--                                <goal>migrate</goal>-->
+<!--                            </goals>-->
+<!--                        </execution>-->
+<!--                    </executions>-->
+<!--                </plugin>-->
                 <plugin>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
