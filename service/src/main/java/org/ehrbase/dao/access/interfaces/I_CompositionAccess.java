@@ -23,15 +23,12 @@ package org.ehrbase.dao.access.interfaces;
 
 import com.nedap.archie.rm.archetyped.FeederAudit;
 import com.nedap.archie.rm.archetyped.Link;
+import com.nedap.archie.rm.composition.Composition;
+import com.nedap.archie.rm.composition.EventContext;
 import com.nedap.archie.rm.support.identification.ObjectVersionId;
 import org.ehrbase.api.exception.InternalServerException;
 import org.ehrbase.api.exception.ObjectNotFoundException;
 import org.ehrbase.dao.access.jooq.CompositionAccess;
-import com.nedap.archie.rm.composition.Composition;
-import com.nedap.archie.rm.composition.EventContext;
-import org.jooq.Result;
-import org.jooq.Table;
-import org.jooq.exception.DataAccessException;
 import org.ehrbase.jooq.pg.tables.records.CompositionHistoryRecord;
 import org.ehrbase.jooq.pg.tables.records.CompositionRecord;
 import org.ehrbase.jooq.pg.tables.records.ConceptRecord;
@@ -40,6 +37,9 @@ import org.ehrbase.jooq.pg.tables.records.IdentifierRecord;
 import org.ehrbase.jooq.pg.tables.records.ParticipationRecord;
 import org.ehrbase.jooq.pg.tables.records.PartyIdentifiedRecord;
 import org.ehrbase.jooq.pg.tables.records.TerritoryRecord;
+import org.jooq.Result;
+import org.jooq.Table;
+import org.jooq.exception.DataAccessException;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -47,7 +47,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.ehrbase.jooq.pg.Tables.*;
+import static org.ehrbase.jooq.pg.Tables.COMPOSITION;
+import static org.ehrbase.jooq.pg.Tables.CONCEPT;
+import static org.ehrbase.jooq.pg.Tables.EVENT_CONTEXT;
+import static org.ehrbase.jooq.pg.Tables.IDENTIFIER;
+import static org.ehrbase.jooq.pg.Tables.LANGUAGE;
+import static org.ehrbase.jooq.pg.Tables.PARTICIPATION;
+import static org.ehrbase.jooq.pg.Tables.PARTY_IDENTIFIED;
+import static org.ehrbase.jooq.pg.Tables.TERRITORY;
 
 /**
  * Composition Access Layer Interface<br>
@@ -151,6 +158,10 @@ public interface I_CompositionAccess extends I_VersionedCRUD {
         return CompositionAccess.retrieveCompositionVersion(domainAccess, id, version);
     }
 
+    static I_CompositionAccess retrieveCompositionVersion(I_DomainAccess domainAccess, UUID ehrId, UUID compositionId, int version) {
+        return CompositionAccess.retrieveCompositionVersion(domainAccess, ehrId, compositionId, version);
+    }
+
     /**
      * Calculate the version corresponding to a {@link com.nedap.archie.rm.ehr.VersionedComposition}  which is the closest in time (before) the {@link Timestamp} provided.
      *
@@ -168,9 +179,9 @@ public interface I_CompositionAccess extends I_VersionedCRUD {
     /**
      * Returns the instance of a {@link com.nedap.archie.rm.ehr.VersionedComposition} corresponding to the version which is the closest in time before the timeCommitted provided.
      *
-     * @param domainAccess    {@link I_DomainAccess} with the persistence SQL Context and knowledge cache
+     * @param domainAccess   {@link I_DomainAccess} with the persistence SQL Context and knowledge cache
      * @param compositionUid {@link UUID} that identifies the composition.
-     * @param timeCommitted   {java.sql.Timestamp} that indicates the point in time to search version for the composition backwards.
+     * @param timeCommitted  {java.sql.Timestamp} that indicates the point in time to search version for the composition backwards.
      * @return the number of the version that is the  closest  in time (before) the timeCommitted parameter provided. If a null timeCommitted is provided the latest composition will be returned.
      * @throws IllegalArgumentException
      * @throws InternalServerException
@@ -196,7 +207,7 @@ public interface I_CompositionAccess extends I_VersionedCRUD {
      *
      * @param domainAccess   SQL context, knowledge
      * @param contributionId contribution object uuid
-     * @param node Name of local node, for creation of object version ID
+     * @param node           Name of local node, for creation of object version ID
      * @return a map of {@link I_CompositionAccess} and their version ID, that match the condition
      * @throws IllegalArgumentException on DB inconsistency
      */
@@ -389,6 +400,7 @@ public interface I_CompositionAccess extends I_VersionedCRUD {
 
     /**
      * Set the record via converting from a history record.
+     *
      * @param record History record
      */
     void setCompositionRecord(CompositionHistoryRecord record);
@@ -421,7 +433,8 @@ public interface I_CompositionAccess extends I_VersionedCRUD {
 
     /**
      * Checks if the given versionedObjectID points to an existing composition.
-     * @param domainAccess Data access object
+     *
+     * @param domainAccess      Data access object
      * @param versionedObjectId ID to be checked
      * @return True if exists
      * @throws ObjectNotFoundException if ID does not exist
@@ -432,7 +445,8 @@ public interface I_CompositionAccess extends I_VersionedCRUD {
 
     /**
      * Checks if given composition ID is ID of a logically deleted composition.
-     * @param domainAccess Data access object
+     *
+     * @param domainAccess      Data access object
      * @param versionedObjectId ID to be checked
      * @return True if deleted, false if not
      * @throws ObjectNotFoundException If no composition entries at all can be found

@@ -33,6 +33,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface CompositionService extends BaseService, VersionedObjectService<Composition, CompositionDto> {
+
+    Optional<CompositionDto> retrieve(UUID ehrId, UUID compositionId, Integer version);
+
     /**
      * @param compositionId The {@link UUID} of the composition to be returned.
      * @param version       The version to returned. If null return the latest

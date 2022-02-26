@@ -30,7 +30,13 @@ import com.nedap.archie.rm.support.identification.ObjectVersionId;
 import org.ehrbase.api.definitions.ServerConfig;
 import org.ehrbase.api.exception.InternalServerException;
 import org.ehrbase.api.exception.ObjectNotFoundException;
-import org.ehrbase.dao.access.interfaces.*;
+import org.ehrbase.dao.access.interfaces.I_AuditDetailsAccess;
+import org.ehrbase.dao.access.interfaces.I_CompositionAccess;
+import org.ehrbase.dao.access.interfaces.I_ConceptAccess;
+import org.ehrbase.dao.access.interfaces.I_ContextAccess;
+import org.ehrbase.dao.access.interfaces.I_ContributionAccess;
+import org.ehrbase.dao.access.interfaces.I_DomainAccess;
+import org.ehrbase.dao.access.interfaces.I_EntryAccess;
 import org.ehrbase.dao.access.jooq.party.PersistedPartyProxy;
 import org.ehrbase.dao.access.support.DataAccess;
 import org.ehrbase.dao.access.util.ContributionDef;
@@ -53,11 +59,25 @@ import org.jooq.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
-import static org.ehrbase.jooq.pg.Tables.*;
+import static org.ehrbase.jooq.pg.Tables.AUDIT_DETAILS;
+import static org.ehrbase.jooq.pg.Tables.COMPOSITION;
+import static org.ehrbase.jooq.pg.Tables.COMPOSITION_HISTORY;
+import static org.ehrbase.jooq.pg.Tables.EVENT_CONTEXT;
 import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.max;
 
@@ -68,7 +88,7 @@ import static org.jooq.impl.DSL.max;
  */
 public class CompositionAccess extends DataAccess implements I_CompositionAccess {
 
-  private static final Logger log = LoggerFactory.getLogger(CompositionAccess.class);
+    private static final Logger log = LoggerFactory.getLogger(CompositionAccess.class);
     public static final String COMPOSITION_LITERAL = "composition";
     // List of Entry DAOs and therefore provides access to all entries of the composition
     private List<I_EntryAccess> content = new ArrayList<>();
@@ -79,12 +99,13 @@ public class CompositionAccess extends DataAccess implements I_CompositionAccess
 
     /**
      * Basic constructor for composition.
-     * @param context DB context object of current server context
+     *
+     * @param context          DB context object of current server context
      * @param knowledgeManager Knowledge cache object of current server context
-     * @param introspectCache Introspect cache object of current server context
-     * @param serverConfig Server config object of current server context
-     * @param composition Object representation of given new composition
-     * @param ehrId Given ID of EHR this composition will be created for
+     * @param introspectCache  Introspect cache object of current server context
+     * @param serverConfig     Server config object of current server context
+     * @param composition      Object representation of given new composition
+     * @param ehrId            Given ID of EHR this composition will be created for
      * @throws IllegalArgumentException when seeking language code, territory code or composer ID failed
      */
     public CompositionAccess(DSLContext context, I_KnowledgeCache knowledgeManager, IntrospectService introspectCache, ServerConfig serverConfig, Composition composition, UUID ehrId) {
@@ -124,9 +145,10 @@ public class CompositionAccess extends DataAccess implements I_CompositionAccess
 
     /**
      * Constructor with convenient {@link I_DomainAccess} parameter, for better readability.
+     *
      * @param domainAccess Current domain access object
-     * @param composition Object representation of given new composition
-     * @param ehrId Given ID of EHR this composition will be created for
+     * @param composition  Object representation of given new composition
+     * @param ehrId        Given ID of EHR this composition will be created for
      * @throws IllegalArgumentException when seeking language code, territory code or composer ID failed
      */
     public CompositionAccess(I_DomainAccess domainAccess, Composition composition, UUID ehrId) {
@@ -203,7 +225,7 @@ public class CompositionAccess extends DataAccess implements I_CompositionAccess
     }
 
     private UUID internalCreate(LocalDateTime timestamp, UUID committerId, UUID systemId,
-        String description, UUID contribution) {
+                                String description, UUID contribution) {
 
         // check if custom contribution is already set, because changing it would yield updating in DB which is not desired (creates wrong new "version")
         if (contribution != null) {
@@ -330,12 +352,11 @@ public class CompositionAccess extends DataAccess implements I_CompositionAccess
         Optional<UUID> contextId = getContextId();
         I_ContextAccess contextAccess;
 
-        if (contextId.isEmpty()){
+        if (contextId.isEmpty()) {
             EventContext context = new EventContextFactory().makeNull();
             contextAccess = I_ContextAccess.getInstance(this, context);
             contextAccess.commit(transactionTime);
-        }
-        else
+        } else
             contextAccess = I_ContextAccess.retrieveInstance(this, contextId.get());
 
         var newEventContext = composition.getContext();
@@ -504,6 +525,14 @@ public class CompositionAccess extends DataAccess implements I_CompositionAccess
         return compositionHistoryAccess;
     }
 
+    public static I_CompositionAccess retrieveCompositionVersion(I_DomainAccess domainAccess, UUID ehrId, UUID compositionId, int version) {
+        if (version != getLastVersionNumber(domainAccess, compositionId)) {
+            throw new UnsupportedOperationException("Reading version history is not implemented");
+        }
+
+        return retrieveInstance(domainAccess, ehrId, compositionId);
+    }
+
     public static Integer getLastVersionNumber(I_DomainAccess domainAccess, UUID compositionId) {
         // check if compositionId is valid (version count = 1) and add number of existing older versions
         if (domainAccess.getContext().fetchExists(COMPOSITION, COMPOSITION.ID.eq(compositionId))) {
@@ -536,9 +565,31 @@ public class CompositionAccess extends DataAccess implements I_CompositionAccess
         return compositionAccess;
     }
 
+    public static I_CompositionAccess retrieveInstance(I_DomainAccess domainAccess, UUID ehrId, UUID compositionId) {
+        var compositionAccess = new CompositionAccess(domainAccess);
+        var context = compositionAccess.getContext();
+
+        CompositionRecord compositionRecord = context.selectFrom(COMPOSITION)
+                .where(COMPOSITION.EHR_ID.eq(ehrId))
+                .and(COMPOSITION.ID.eq(compositionId))
+                .fetchOne();
+
+        if (compositionRecord == null) {
+            return null;
+        }
+
+        compositionAccess.setCompositionRecord(compositionRecord);
+        compositionAccess.setContent(I_EntryAccess.retrieveInstanceInComposition(domainAccess, compositionAccess));
+        I_ContributionAccess contributionAccess = I_ContributionAccess.retrieveInstance(domainAccess, compositionAccess.getContributionId());
+        compositionAccess.setContributionAccess(contributionAccess);
+        I_AuditDetailsAccess auditAccess = new AuditDetailsAccess(domainAccess.getDataAccess()).retrieveInstance(domainAccess.getDataAccess(), compositionAccess.getAuditDetailsId());
+        compositionAccess.setAuditDetailsAccess(auditAccess);
+        return compositionAccess;
+    }
+
     /**
      * @throws ObjectNotFoundException when no version in compliance with timestamp is available
-     * @throws InternalServerException  on problem with SQL statement or input
+     * @throws InternalServerException on problem with SQL statement or input
      */
     public static int getVersionFromTimeStamp(I_DomainAccess domainAccess, UUID vCompositionUid, Timestamp timeCommitted) {
 
@@ -591,10 +642,10 @@ public class CompositionAccess extends DataAccess implements I_CompositionAccess
         Set<UUID> compositions = new HashSet<>();   // Set, because of unique values
         // add all compositions having a link to given contribution
         domainAccess.getContext().select(COMPOSITION.ID).from(COMPOSITION).where(COMPOSITION.IN_CONTRIBUTION.eq(contribution)).fetch()
-            .forEach(rec -> compositions.add(rec.value1()));
+                .forEach(rec -> compositions.add(rec.value1()));
         // and older versions or deleted ones, too
         domainAccess.getContext().select(COMPOSITION_HISTORY.ID).from(COMPOSITION_HISTORY).where(COMPOSITION_HISTORY.IN_CONTRIBUTION.eq(contribution)).fetch()
-            .forEach(rec -> compositions.add(rec.value1()));
+                .forEach(rec -> compositions.add(rec.value1()));
 
         // get whole "version map" of each matching composition and do fine-grain check for matching contribution
         // precondition: each UUID in `compositions` set is unique, so for each the "version map" is only created once below
@@ -772,16 +823,24 @@ public class CompositionAccess extends DataAccess implements I_CompositionAccess
     }
 
     @Override
-    public String getFeederAudit() {return compositionRecord.getFeederAudit() == null ? null : compositionRecord.getFeederAudit().toString();}
+    public String getFeederAudit() {
+        return compositionRecord.getFeederAudit() == null ? null : compositionRecord.getFeederAudit().toString();
+    }
 
     @Override
-    public String getLinks() {return compositionRecord.getLinks() == null ? null : compositionRecord.getLinks().toString();}
+    public String getLinks() {
+        return compositionRecord.getLinks() == null ? null : compositionRecord.getLinks().toString();
+    }
 
     @Override
-    public void setFeederAudit(FeederAudit feederAudit) {compositionRecord.setFeederAudit(JSONB.valueOf(new FeederAuditEncoding().toDB(feederAudit)));}
+    public void setFeederAudit(FeederAudit feederAudit) {
+        compositionRecord.setFeederAudit(JSONB.valueOf(new FeederAuditEncoding().toDB(feederAudit)));
+    }
 
     @Override
-    public void setLinks(List<Link> links) {compositionRecord.setLinks(JSONB.valueOf(new LinksEncoding().toDB(links)));}
+    public void setLinks(List<Link> links) {
+        compositionRecord.setLinks(JSONB.valueOf(new LinksEncoding().toDB(links)));
+    }
 
     /**
      * @throws InternalServerException on problem updating context
@@ -929,7 +988,7 @@ public class CompositionAccess extends DataAccess implements I_CompositionAccess
 
     public static boolean exists(I_DomainAccess domainAccess, UUID versionedObjectId) {
         if (domainAccess.getContext().fetchExists(COMPOSITION, COMPOSITION.ID.eq(versionedObjectId)) ||
-            domainAccess.getContext().fetchExists(COMPOSITION_HISTORY, COMPOSITION_HISTORY.ID.eq(versionedObjectId))) {
+                domainAccess.getContext().fetchExists(COMPOSITION_HISTORY, COMPOSITION_HISTORY.ID.eq(versionedObjectId))) {
             return true;
         } else {
             throw new ObjectNotFoundException(COMPOSITION_LITERAL, "No composition with given ID found");
