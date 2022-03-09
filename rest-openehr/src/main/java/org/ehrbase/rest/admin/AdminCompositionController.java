@@ -103,7 +103,7 @@ public class AdminCompositionController extends BaseController {
 
         UUID compositionUid = UUID.fromString(compositionId);
 
-        compositionService.adminDelete(compositionUid);
+        compositionService.adminDelete(ehrUuid, compositionUid);
 
         return ResponseEntity.noContent().build();
     }

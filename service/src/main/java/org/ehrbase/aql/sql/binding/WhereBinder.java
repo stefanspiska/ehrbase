@@ -28,6 +28,7 @@ import org.ehrbase.aql.definition.LateralVariable;
 import org.ehrbase.aql.definition.VariableDefinition;
 import org.ehrbase.aql.sql.PathResolver;
 import org.ehrbase.aql.sql.queryimpl.*;
+import org.ehrbase.aql.sql.queryimpl.attribute.JoinSetup;
 import org.ehrbase.aql.sql.queryimpl.value_field.ISODateTime;
 import org.ehrbase.dao.access.interfaces.I_DomainAccess;
 import org.ehrbase.serialisation.dbencoding.CompositionSerializer;
@@ -37,6 +38,7 @@ import org.jooq.impl.DSL;
 import java.util.*;
 
 import static org.ehrbase.aql.sql.queryimpl.IterativeNodeConstants.ENV_AQL_USE_JSQUERY;
+import static org.ehrbase.rest.openehr.OpenehrQueryController.EHR_ID_VALUE;
 
 /**
  * Bind the abstract WHERE clause parameters into a SQL expression
@@ -82,6 +84,7 @@ public class WhereBinder {
     private String sqlConditionalFunctionalOperatorRegexp = "(?i)(like|ilike|substr|in|not in)"; //list of subquery and operators
     private boolean requiresJSQueryClosure = false;
     private boolean isFollowedBySQLConditionalOperator = false;
+    private EhrIdCondition explicitEhrIdCondition = null;
 
     public WhereBinder(I_DomainAccess domainAccess, CompositionAttributeQuery compositionAttributeQuery, List<Object> whereClause, PathResolver pathResolver) {
         this.compositionAttributeQuery = compositionAttributeQuery;
@@ -90,7 +93,7 @@ public class WhereBinder {
         this.domainAccess = domainAccess;
     }
 
-    private TaggedStringBuilder encodeWhereVariable(int whereCursor, MultiFieldsMap multiFieldsMap, I_VariableDefinition variableDefinition, boolean forceSQL, String compositionName) {
+    private TaggedStringBuilder encodeWhereVariable(int whereCursor, MultiFieldsMap multiFieldsMap, I_VariableDefinition variableDefinition, boolean forceSQL, String compositionName) throws UnknownVariableException {
         String identifier = variableDefinition.getIdentifier();
         String className = pathResolver.classNameOf(identifier);
         if (className == null)
@@ -144,7 +147,7 @@ public class WhereBinder {
         }
     }
 
-    private TaggedStringBuilder buildWhereCondition(int whereCursor, MultiFieldsMap multiFieldsMap, TaggedStringBuilder taggedBuffer, List<Object> item) {
+    private TaggedStringBuilder buildWhereCondition(int whereCursor, MultiFieldsMap multiFieldsMap, TaggedStringBuilder taggedBuffer, List<Object> item) throws UnknownVariableException {
         for (Object part : item) {
             if (part instanceof String)
                 taggedBuffer.append((String) part);
@@ -164,7 +167,7 @@ public class WhereBinder {
         return taggedBuffer;
     }
 
-    public Condition bind(String templateId, int whereCursor, MultiFieldsMap multiWhereFieldsMap, MultiFieldsMap multiSelectFieldsMap) {
+    public Condition bind(JoinSetup joinSetup, String templateId, int whereCursor, MultiFieldsMap multiWhereFieldsMap, MultiFieldsMap multiSelectFieldsMap) throws UnknownVariableException {
 
         boolean unresolvedVariable = false;
 
@@ -271,6 +274,12 @@ public class WhereBinder {
                             isFollowedBySQLConditionalOperator = true;
                             requiresJSQueryClosure = false;
                         } else {
+                            //prefix the ehr_id/value translation with matching filters for the current joins
+                            DistributedFilter distributedFilter = new DistributedFilter(joinSetup, whereItems);
+                            if (((I_VariableDefinition) item).getPath().equals(EHR_ID_VALUE)) {
+                                distributedFilter.addToSql(taggedStringBuilder, whereItems, cursor);
+                                explicitEhrIdCondition = distributedFilter.getEhrIdCondition();
+                            }
                             String expanded = expandForLateral(templateId, encodeWhereVariable(whereCursor, multiWhereFieldsMap, (I_VariableDefinition) item, true, null), (I_VariableDefinition)item, multiSelectFieldsMap );
                             if (StringUtils.isNotBlank(expanded)) {
                                 taggedStringBuilder.append(encodeForSubquery(expanded, inSubqueryOperator));
@@ -443,4 +452,7 @@ public class WhereBinder {
 
     }
 
+    public EhrIdCondition getExplicitEhrIdCondition() {
+        return explicitEhrIdCondition;
+    }
 }

@@ -111,13 +111,13 @@ public class CompositionServiceImp extends BaseServiceImp implements Composition
             UUID ehrId, Composition objData, UUID systemId, UUID committerId, String description) {
 
         UUID compositionId = internalCreate(ehrId, objData, systemId, committerId, description, null);
-        return getCompositionDto(I_CompositionAccess.retrieveInstance(getDataAccess(), compositionId));
+        return getCompositionDto(I_CompositionAccess.retrieveInstance(getDataAccess(), ehrId, compositionId));
     }
 
     @Override
     public Optional<CompositionDto> create(UUID ehrId, Composition objData, UUID contribution) {
         UUID compositionId = internalCreate(ehrId, objData, null, null, null, contribution);
-        return getCompositionDto(I_CompositionAccess.retrieveInstance(getDataAccess(), compositionId));
+        return getCompositionDto(I_CompositionAccess.retrieveInstance(getDataAccess(), ehrId, compositionId));
     }
 
     @Override
@@ -218,6 +218,7 @@ public class CompositionServiceImp extends BaseServiceImp implements Composition
 
         var compoId =
                 internalUpdate(
+                        ehrId,
                         UUID.fromString(targetObjId.getObjectId().getValue()),
                         objData,
                         systemId,
@@ -226,7 +227,9 @@ public class CompositionServiceImp extends BaseServiceImp implements Composition
                         null);
         return getCompositionDto(
                 I_CompositionAccess.retrieveInstance(
-                        getDataAccess(), UUID.fromString(compoId.getObjectId().getValue())));
+                        getDataAccess(),
+                        ehrId,
+                        UUID.fromString(compoId.getObjectId().getValue())));
     }
 
     @Override
@@ -235,6 +238,7 @@ public class CompositionServiceImp extends BaseServiceImp implements Composition
 
         var compoId =
                 internalUpdate(
+                        ehrId,
                         UUID.fromString(targetObjId.getObjectId().getValue()),
                         objData,
                         null,
@@ -243,7 +247,9 @@ public class CompositionServiceImp extends BaseServiceImp implements Composition
                         contribution);
         return getCompositionDto(
                 I_CompositionAccess.retrieveInstance(
-                        getDataAccess(), UUID.fromString(compoId.getObjectId().getValue())));
+                        getDataAccess(),
+                        ehrId,
+                        UUID.fromString(compoId.getObjectId().getValue())));
     }
 
     @Override
@@ -266,6 +272,7 @@ public class CompositionServiceImp extends BaseServiceImp implements Composition
      * @return Version UID pointing to updated composition
      */
     private ObjectVersionId internalUpdate(
+            UUID ehrId,
             UUID compositionId,
             Composition composition,
             UUID systemId,
@@ -274,7 +281,7 @@ public class CompositionServiceImp extends BaseServiceImp implements Composition
             UUID contributionId) {
         boolean result;
         try {
-            var compositionAccess = I_CompositionAccess.retrieveInstance(getDataAccess(), compositionId);
+            var compositionAccess = I_CompositionAccess.retrieveInstance(getDataAccess(), ehrId, compositionId);
             if (compositionAccess == null) {
                 throw new ObjectNotFoundException(
                         I_CompositionAccess.class.getName(), "Could not find composition: " + compositionId);
@@ -350,6 +357,7 @@ public class CompositionServiceImp extends BaseServiceImp implements Composition
             UUID committerId,
             String description) {
         return internalDelete(
+                ehrId,
                 UUID.fromString(targetObjId.getObjectId().getValue()),
                 systemId,
                 committerId,
@@ -360,6 +368,7 @@ public class CompositionServiceImp extends BaseServiceImp implements Composition
     @Override
     public boolean delete(UUID ehrId, ObjectVersionId targetObjId, UUID contribution) {
         return internalDelete(
+                ehrId,
                 UUID.fromString(targetObjId.getObjectId().getValue()), null, null, null, contribution);
     }
 
@@ -380,6 +389,7 @@ public class CompositionServiceImp extends BaseServiceImp implements Composition
      * @return Time of deletion, if successful
      */
     private boolean internalDelete(
+            UUID ehrId,
             UUID compositionId,
             UUID systemId,
             UUID committerId,
@@ -387,7 +397,7 @@ public class CompositionServiceImp extends BaseServiceImp implements Composition
             UUID contributionId) {
         I_CompositionAccess compositionAccess;
         try {
-            compositionAccess = I_CompositionAccess.retrieveInstance(getDataAccess(), compositionId);
+            compositionAccess = I_CompositionAccess.retrieveInstance(getDataAccess(), ehrId, compositionId);
         } catch (Exception e) {
             throw new ObjectNotFoundException(
                     I_CompositionAccess.class.getName(), "Error while retrieving composition", e);
@@ -687,9 +697,9 @@ public class CompositionServiceImp extends BaseServiceImp implements Composition
 
     @PreAuthorize("hasRole('ADMIN')")
     @Override
-    public void adminDelete(UUID compositionId) {
+    public void adminDelete(UUID ehrId, UUID compositionId) {
         I_CompositionAccess compositionAccess = I_CompositionAccess.retrieveInstance(getDataAccess(),
-                compositionId);
+                ehrId, compositionId);
         if (compositionAccess != null) {
             compositionAccess.adminDelete();
         }

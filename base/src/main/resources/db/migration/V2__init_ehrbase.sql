@@ -36,13 +36,7 @@
 --   - replaced all VARCHAR with TEXT (because our tzid is longer than what fits)
 --
 -- 20220126 CCH: refactored all migrations to be in one, removed unnecessary objects
--- This migration approach focuses on essential DDL commands that define the DB structure:
--- - types
--- - tables
--- - functions
--- other deployment specifics such as indexes and triggers should be defined elsewhere
--- since they have no impact on code generation, but these are operational entities
---
+
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;

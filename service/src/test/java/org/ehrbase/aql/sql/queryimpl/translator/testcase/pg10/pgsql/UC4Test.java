@@ -29,10 +29,21 @@ public class UC4Test extends UC4 {
     public UC4Test(){
         super();
         this.expectedSqlExpression =
-                "select \"\".\"/composer/name\", \"\".\"/context/start_time/value\" from (select \"composer_ref\".\"name\" as \"/composer/name\", jsonb_extract_path_text(cast(\"ehr\".\"js_dv_date_time\"(\n" +
-                        "  \"ehr\".\"event_context\".\"start_time\", \n" +
-                        "  event_context.START_TIME_TZID\n" +
-                        ") as jsonb),'value') as \"/context/start_time/value\" from \"ehr\".\"entry\" join \"ehr\".\"event_context\" on (\"ehr\".\"event_context\".\"composition_id\" = \"ehr\".\"entry\".\"composition_id\" and \"ehr\".\"event_context\".\"ehr_id\" = \"ehr\".\"entry\".\"ehr_id\") right outer join \"ehr\".\"composition\" as \"composition_join\" on (\"composition_join\".\"id\" = \"ehr\".\"entry\".\"composition_id\" and \"composition_join\".\"ehr_id\" = \"ehr\".\"entry\".\"ehr_id\") join \"ehr\".\"party_identified\" as \"composer_ref\" on \"composition_join\".\"composer\" = \"composer_ref\".\"id\" where \"ehr\".\"entry\".\"template_id\" = ?) as \"\" order by \"/context/start_time/value\" desc";
+                "select \"\".\"/composer/name\", \"\".\"/context/start_time/value\"\n" +
+                        "from (select \"composer_ref\".\"name\"     as \"/composer/name\",\n" +
+                        "             jsonb_extract_path_text(cast(\"ehr\".\"js_dv_date_time\"(\n" +
+                        "                     \"ehr\".\"event_context\".\"start_time\",\n" +
+                        "                     event_context.START_TIME_TZID\n" +
+                        "                 ) as jsonb), 'value') as \"/context/start_time/value\"\n" +
+                        "      from \"ehr\".\"entry\"\n" +
+                        "               right outer join \"ehr\".\"composition\" as \"composition_join\"\n" +
+                        "                                on (\"composition_join\".\"id\" = \"ehr\".\"entry\".\"composition_id\" and\n" +
+                        "                                    \"composition_join\".\"ehr_id\" = \"ehr\".\"entry\".\"ehr_id\")\n" +
+                        "               join \"ehr\".\"event_context\" on (\"ehr\".\"event_context\".\"composition_id\" = \"composition_join\".\"id\" and\n" +
+                        "                                              \"ehr\".\"event_context\".\"ehr_id\" = \"composition_join\".\"ehr_id\")\n" +
+                        "               join \"ehr\".\"party_identified\" as \"composer_ref\" on \"composition_join\".\"composer\" = \"composer_ref\".\"id\"\n" +
+                        "      where \"ehr\".\"entry\".\"template_id\" = ?) as \"\"\n" +
+                        "order by \"/context/start_time/value\" desc";
     }
 
     @Test

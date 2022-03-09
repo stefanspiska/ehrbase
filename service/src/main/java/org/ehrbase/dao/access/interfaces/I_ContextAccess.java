@@ -57,8 +57,8 @@ public interface I_ContextAccess extends I_SimpleCRUD {
      * @param id           the event context id
      * @return an interface to the access layer
      */
-    static I_ContextAccess retrieveInstance(I_DomainAccess domainAccess, UUID id) {
-        return ContextAccess.retrieveInstance(domainAccess, id);
+    static I_ContextAccess retrieveInstance(I_DomainAccess domainAccess, UUID ehr_id, UUID id) {
+        return ContextAccess.retrieveInstance(domainAccess, ehr_id, id);
     }
 
     static I_ContextAccess retrieveInstance(I_DomainAccess domainAccess, Result<?> records) {
@@ -72,8 +72,8 @@ public interface I_ContextAccess extends I_SimpleCRUD {
      * @param id           event context id
      * @return 1 on success, 0 otherwise
      */
-    static Integer delete(I_DomainAccess domainAccess, UUID id) {
-        return domainAccess.getContext().delete(EVENT_CONTEXT).where(EVENT_CONTEXT.ID.eq(id)).execute();
+    static Integer delete(I_DomainAccess domainAccess, UUID id, UUID ehr_id) {
+        return domainAccess.getContext().delete(EVENT_CONTEXT).where(EVENT_CONTEXT.ID.eq(id).and(EVENT_CONTEXT.EHR_ID.eq(ehr_id))).execute();
     }
 
     /**

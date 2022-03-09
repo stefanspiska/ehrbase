@@ -85,9 +85,9 @@ public class ContextAccess extends DataAccess implements I_ContextAccess {
         super(domainAccess);
     }
 
-    public static I_ContextAccess retrieveInstance(I_DomainAccess domainAccess, UUID id) {
+    public static I_ContextAccess retrieveInstance(I_DomainAccess domainAccess, UUID ehr_id, UUID id) {
         ContextAccess contextAccess = new ContextAccess(domainAccess);
-        contextAccess.eventContextRecord = domainAccess.getContext().fetchOne(EVENT_CONTEXT, EVENT_CONTEXT.ID.eq(id));
+        contextAccess.eventContextRecord = domainAccess.getContext().fetchOne(EVENT_CONTEXT, EVENT_CONTEXT.ID.eq(id).and(EVENT_CONTEXT.EHR_ID.eq(ehr_id)));
         return contextAccess;
     }
 
@@ -101,7 +101,7 @@ public class ContextAccess extends DataAccess implements I_ContextAccess {
         eventContextRecord.setLocation((String) records.getValue(0, I_CompositionAccess.F_CONTEXT_LOCATION));
 //        eventContextRecord.setSetting(records.getValue(0, I_CompositionAccess.F_CONTEXT_SETTING));
         eventContextRecord.setOtherContext((JSONB) records.getValue(0, I_CompositionAccess.F_CONTEXT_OTHER_CONTEXT));
-
+        eventContextRecord.setEhrId((UUID) records.getValue(0, I_CompositionAccess.F_CONTEXT_EHR_ID));
         return contextAccess;
     }
 

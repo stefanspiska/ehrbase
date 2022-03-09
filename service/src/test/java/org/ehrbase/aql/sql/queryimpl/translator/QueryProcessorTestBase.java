@@ -24,9 +24,11 @@ import org.ehrbase.aql.compiler.AqlExpression;
 import org.ehrbase.aql.compiler.Contains;
 import org.ehrbase.aql.compiler.Statements;
 import org.ehrbase.aql.sql.QueryProcessor;
+import org.ehrbase.aql.sql.queryimpl.UnknownVariableException;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 public class QueryProcessorTestBase extends TestAqlBase {
 
@@ -35,7 +37,7 @@ public class QueryProcessorTestBase extends TestAqlBase {
     protected boolean expectedOutputWithJson;
 
 
-    public boolean testAqlSelectQuery() {
+    public boolean testAqlSelectQuery()  {
             AqlExpression aqlExpression = new AqlExpression().parse(aql);
             Contains contains = new Contains(new AqlExpression().parse(aql).getParseTree(), knowledge).process();
             Statements statements = new Statements(aqlExpression.getParseTree(), contains.getIdentifierMapper(), null).process();
@@ -45,6 +47,7 @@ public class QueryProcessorTestBase extends TestAqlBase {
             QueryProcessor.AqlSelectQuery actual = cut.buildAqlSelectQuery();
             // check that generated sql is expected sql
             assertThat(removeLateralVarRef(removeLateralArrayRef(removeAlias(actual.getSelectQuery().getSQL())))).as(aql).isEqualToIgnoringWhitespace(removeAlias(expectedSqlExpression));
+
 
             return true;
     }

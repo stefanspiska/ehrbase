@@ -135,6 +135,8 @@ SELECT create_reference_table('ehr.audit_details');
 SELECT create_reference_table('ehr.contribution');
 SELECT create_reference_table('ehr.language');
 SELECT create_reference_table('ehr.territory');
+SELECT create_reference_table('ehr.concept');
+SELECT create_reference_table('ehr.participation');
 
 -- Composition table distribution
 ALTER TABLE ehr.composition DROP CONSTRAINT composition_pkey CASCADE;
@@ -303,6 +305,7 @@ CREATE INDEX status_history_ehr_idx ON ehr.status_history USING btree (ehr_id);
 CREATE INDEX status_party_idx ON ehr.status USING btree (party);
 CREATE INDEX template_entry_idx ON ehr.entry USING btree (template_id);
 CREATE UNIQUE INDEX territory_code_index ON ehr.territory USING btree (code);
+CREATE INDEX concept_code_language_idx ON ehr.concept USING btree (conceptid, language);
 
 -- TRIGGERS
 -- at this time (9.2.2022) triggers cannot be distributed with CITUS

@@ -22,6 +22,7 @@
 package org.ehrbase.aql.sql;
 
 import org.ehrbase.aql.definition.LateralJoinDefinition;
+import org.ehrbase.aql.sql.binding.EhrIdCondition;
 import org.jooq.Condition;
 import org.jooq.SelectQuery;
 
@@ -37,6 +38,7 @@ public class QuerySteps {
     private Condition whereCondition; //can be force to a NULL condition (f.e. 1 = 0)
     private final List<LateralJoinDefinition> lateralJoins;
     private final String templateId;
+    private EhrIdCondition explicitEhrIdCondition = null;
 
     public QuerySteps(SelectQuery selectQuery, Condition whereCondition, List<LateralJoinDefinition> lateralJoins, String templateId) {
         this.selectQuery = selectQuery;
@@ -89,5 +91,13 @@ public class QuerySteps {
                 return true;
         }
         return false;
+    }
+
+    public void setExplicitEhrIdCondition(EhrIdCondition explicitEhrIdCondition) {
+        this.explicitEhrIdCondition = explicitEhrIdCondition;
+    }
+
+    public EhrIdCondition getExplicitEhrIdCondition() {
+        return explicitEhrIdCondition;
     }
 }

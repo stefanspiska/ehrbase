@@ -23,10 +23,7 @@ package org.ehrbase.aql.sql.binding;
 
 import org.ehrbase.aql.sql.queryimpl.attribute.JoinSetup;
 import org.ehrbase.dao.access.interfaces.I_DomainAccess;
-import org.jooq.Field;
-import org.jooq.JoinType;
-import org.jooq.SelectQuery;
-import org.jooq.Table;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.ehrbase.jooq.pg.tables.records.CompositionRecord;
 import org.ehrbase.jooq.pg.tables.records.EhrRecord;
@@ -56,6 +53,7 @@ public class JoinBinder implements IJoinBinder {
     public static final Table<PartyIdentifiedRecord> composerRef = PARTY_IDENTIFIED.as("composer_ref");
     public static final Table<PartyIdentifiedRecord> subjectRef = PARTY_IDENTIFIED.as("subject_ref");
     public static final Table<PartyIdentifiedRecord> facilityRef = PARTY_IDENTIFIED.as("facility_ref");
+//    private final EhrIdCondition explicitEhrIdCondition;
     private boolean compositionJoined = false;
     private boolean statusJoined = false;
     private boolean subjectJoin = false;
@@ -68,7 +66,7 @@ public class JoinBinder implements IJoinBinder {
     private final I_DomainAccess domainAccess;
     private final JoinSetup joinSetup;
 
-    public JoinBinder(I_DomainAccess domainAccess,  JoinSetup joinSetup) {
+    public JoinBinder(I_DomainAccess domainAccess, JoinSetup joinSetup) {
         this.domainAccess = domainAccess;
         this.joinSetup = joinSetup;
     }
@@ -168,7 +166,8 @@ public class JoinBinder implements IJoinBinder {
             return;
         selectQuery.addJoin(compositionRecordTable, JoinType.RIGHT_OUTER_JOIN,
                 DSL.field(compositionRecordTable.field(COMPOSITION.ID)).eq(ENTRY.COMPOSITION_ID).
-                        and(compositionRecordTable.field(COMPOSITION.EHR_ID).eq(ENTRY.EHR_ID)));
+                        and(compositionRecordTable.field(COMPOSITION.EHR_ID).eq(ENTRY.EHR_ID))
+        );
         compositionJoined = true;
     }
 
@@ -182,17 +181,21 @@ public class JoinBinder implements IJoinBinder {
 
     private void joinEhrStatus(SelectQuery<?> selectQuery, JoinSetup joinSetup) {
         if (statusJoined) return;
+
         if (joinSetup.isJoinComposition() || joinSetup.isUseEntry()) {
             joinComposition(selectQuery);
             selectQuery.addJoin(statusRecordTable,
-                    DSL.field(statusRecordTable.field(STATUS.EHR_ID.getName(), UUID.class)).eq(DSL.field(compositionRecordTable.field(COMPOSITION.EHR_ID.getName(), UUID.class))));
+                            DSL.field(statusRecordTable.field(STATUS.EHR_ID.getName(), UUID.class)).eq(DSL.field(compositionRecordTable.field(COMPOSITION.EHR_ID.getName(), UUID.class)))
+
+            );
+            compositionJoined = true;
             statusJoined = true;
         } else {//assume it is joined on EHR
             if (joinSetup.isJoinEhr())
                 joinEhr(selectQuery);
             selectQuery.addJoin(statusRecordTable,
-                    DSL.field(statusRecordTable.field(STATUS.EHR_ID.getName(), UUID.class))
-                            .eq(DSL.field(ehrRecordTable.field(EHR_.ID.getName(), UUID.class))));
+                            DSL.field(statusRecordTable.field(STATUS.EHR_ID.getName(), UUID.class)).eq(DSL.field(ehrRecordTable.field(EHR_.ID.getName(), UUID.class)))
+                    );
             statusJoined = true;
         }
     }
@@ -204,13 +207,16 @@ public class JoinBinder implements IJoinBinder {
         selectQuery.addJoin(subjectTable,
                 DSL.field(subjectTable.field(PARTY_IDENTIFIED.ID.getName(), UUID.class))
                         .eq(DSL.field(statusRecordTable.field(STATUS.PARTY.getName(), UUID.class))));
+
         subjectJoin = true;
     }
 
     private void joinEventContext(SelectQuery<?> selectQuery) {
         if (eventContextJoined) return;
-        selectQuery.addJoin(EVENT_CONTEXT, EVENT_CONTEXT.COMPOSITION_ID.eq(ENTRY.COMPOSITION_ID).
-                and(EVENT_CONTEXT.EHR_ID.eq(ENTRY.EHR_ID)));
+        selectQuery.addJoin(EVENT_CONTEXT, EVENT_CONTEXT.COMPOSITION_ID.eq(DSL.field(compositionRecordTable.field(COMPOSITION.ID.getName(), UUID.class))).
+                and(
+                        EVENT_CONTEXT.EHR_ID.eq(DSL.field(compositionRecordTable.field(COMPOSITION.EHR_ID.getName(), UUID.class))))
+        );
         eventContextJoined = true;
     }
 

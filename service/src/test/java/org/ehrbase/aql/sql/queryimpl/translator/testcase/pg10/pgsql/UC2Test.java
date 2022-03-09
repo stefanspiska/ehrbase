@@ -31,7 +31,7 @@ public class UC2Test extends UC2 {
         this.expectedSqlExpression = "select distinct on (\"/ehr_id/value\") \"\".\"/ehr_id/value\" " +
                 "from (" +
                 "      select \"ehr_join\".\"id\" as \"/ehr_id/value\" from \"ehr\".\"ehr\" as \"ehr_join\" " +
-                "           where (\"ehr_join\".\"id\"='30580007')" +
+                "           where (\"ehr_join\".\"id\"='431aba44-8e13-4b1b-a235-230bfdc58ade')" +
                 ") as \"\"";
     }
 

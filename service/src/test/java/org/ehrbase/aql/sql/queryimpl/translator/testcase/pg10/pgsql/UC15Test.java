@@ -19,6 +19,7 @@
 
 package org.ehrbase.aql.sql.queryimpl.translator.testcase.pg10.pgsql;
 
+import org.ehrbase.aql.sql.queryimpl.UnknownVariableException;
 import org.ehrbase.aql.sql.queryimpl.translator.testcase.UC15;
 import org.junit.Test;
 
@@ -30,16 +31,11 @@ public class UC15Test extends UC15 {
     public UC15Test(){
         super();
         this.expectedSqlExpression =
-                "select distinct on (\"/ehr_status/other_details\") \"\".\"/ehr_status/other_details\"" +
-                        " from (select jsonb_extract_path_text(cast(\"ehr\".\"js_ehr_status\"(\"status_join\".\"ehr_id\") as jsonb),'other_details') as \"/ehr_status/other_details\"" +
-                        " from \"ehr\".\"ehr\" as \"ehr_join\"" +
-                        " join \"ehr\".\"status\" as \"status_join\"" +
-                        " on \"status_join\".\"ehr_id\" = \"ehr_join\".\"id\"" +
-                        " where (\"ehr_join\".\"id\" = '2a3b673f-d1b1-44c5-9e38-dcadf67ff2fc')) as \"\"";
+                "select distinct on (\"/ehr_status/other_details\") \"\".\"/ehr_status/other_details\" from (select jsonb_extract_path_text(cast(\"ehr\".\"js_ehr_status\"(\"status_join\".\"ehr_id\") as jsonb),'other_details') as \"/ehr_status/other_details\" from \"ehr\".\"ehr\" as \"ehr_join\" join \"ehr\".\"status\" as \"status_join\" on \"status_join\".\"ehr_id\" = \"ehr_join\".\"id\" where ( \"status_join\".\"ehr_id\"= '2a3b673f-d1b1-44c5-9e38-dcadf67ff2fc' AND \"ehr_join\".\"id\" = '2a3b673f-d1b1-44c5-9e38-dcadf67ff2fc')) as \"\"";
     }
 
     @Test
-    public void testIt(){
+    public void testIt()  {
         assertThat(testAqlSelectQuery()).isTrue();
     }
 }

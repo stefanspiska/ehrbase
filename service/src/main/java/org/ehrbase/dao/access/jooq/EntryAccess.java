@@ -102,14 +102,15 @@ public class EntryAccess extends DataAccess implements I_EntryAccess {
      */
     public static List<I_EntryAccess> retrieveInstanceInComposition(I_DomainAccess domainAccess, I_CompositionAccess compositionAccess) {
 
-        Result<EntryRecord> entryRecords = domainAccess.getContext().selectFrom(ENTRY).where(ENTRY.COMPOSITION_ID.eq(compositionAccess.getId())).fetch();
+        Result<EntryRecord> entryRecords = domainAccess.getContext().selectFrom(ENTRY).
+                where(ENTRY.COMPOSITION_ID.eq(compositionAccess.getId()).and(ENTRY.EHR_ID.eq(compositionAccess.getEhrid()))).fetch();
 
         //build the list of parameters to recreate the composition
         Map<SystemValue, Object> values = new HashMap<>();
         values.put(SystemValue.COMPOSER, new PersistedPartyProxy(domainAccess).retrieve(compositionAccess.getComposerId()));
 
         // optional handling for persistent compositions that do not have a context
-        Optional<I_ContextAccess> opContextAccess = compositionAccess.getContextId().map(id -> I_ContextAccess.retrieveInstance(domainAccess, id));
+        Optional<I_ContextAccess> opContextAccess = compositionAccess.getContextId().map(id -> I_ContextAccess.retrieveInstance(domainAccess, compositionAccess.getEhrid(), id));
         opContextAccess.ifPresent(context -> values.put(SystemValue.CONTEXT, context.mapRmEventContext()));
 
         values.put(SystemValue.LANGUAGE, new CodePhrase(new TerminologyId("ISO_639-1"), compositionAccess.getLanguageCode()));
@@ -178,7 +179,7 @@ public class EntryAccess extends DataAccess implements I_EntryAccess {
         EventContext context = I_ContextAccess.retrieveHistoricalEventContext(domainAccess, compositionHistoryAccess.getId(), compositionHistoryAccess.getSysTransaction());
         if (context == null) {//unchanged context use the current one!
             // also optional handling of context, because persistent compositions don't have a context
-            compositionHistoryAccess.getContextId().ifPresent(uuid -> I_ContextAccess.retrieveInstance(domainAccess, uuid).mapRmEventContext());
+            compositionHistoryAccess.getContextId().ifPresent(uuid -> I_ContextAccess.retrieveInstance(domainAccess, compositionHistoryAccess.getEhrid(), uuid).mapRmEventContext());
         }
         values.put(SystemValue.CONTEXT, context);
 

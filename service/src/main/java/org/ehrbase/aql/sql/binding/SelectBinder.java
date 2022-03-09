@@ -27,6 +27,7 @@ import org.ehrbase.aql.containment.IdentifierMapper;
 import org.ehrbase.aql.definition.I_VariableDefinition;
 import org.ehrbase.aql.sql.PathResolver;
 import org.ehrbase.aql.sql.queryimpl.*;
+import org.ehrbase.aql.sql.queryimpl.attribute.JoinSetup;
 import org.ehrbase.dao.access.interfaces.I_DomainAccess;
 import org.ehrbase.service.IntrospectService;
 import org.ehrbase.service.KnowledgeCacheService;
@@ -55,6 +56,7 @@ public class SelectBinder extends TemplateMetaData implements ISelectBinder {
     private final VariableDefinitions variableDefinitions;
     private final WhereBinder whereBinder;
     private final I_DomainAccess domainAccess;
+    private EhrIdCondition explicitEhrIdCondition = null; //from where statement
 
     SelectBinder(I_DomainAccess domainAccess, IntrospectService introspectCache, PathResolver pathResolver, VariableDefinitions variableDefinitions, List whereClause, String serverNodeId) {
         super(introspectCache);
@@ -81,7 +83,7 @@ public class SelectBinder extends TemplateMetaData implements ISelectBinder {
      * @param templateId
      * @return
      */
-    public List<MultiFields> bind(String templateId) {
+    public List<MultiFields> bind(String templateId) throws UnknownVariableException {
         ObjectQuery.reset();
 
         List<MultiFields> multiFieldsList = new ArrayList<>();
@@ -109,6 +111,7 @@ public class SelectBinder extends TemplateMetaData implements ISelectBinder {
                 }
 
                 encodeForLateral(className, templateId, variableDefinition, multiFields);
+
             }
             multiFieldsList.add(multiFields);
             ObjectQuery.inc();
@@ -118,15 +121,17 @@ public class SelectBinder extends TemplateMetaData implements ISelectBinder {
     }
 
 
-    public Condition getWhereConditions(String templateId, int whereCursor, MultiFieldsMap multiWhereFieldsMap, MultiFieldsMap multiSelectFieldsMap) {
-        return whereBinder.bind(templateId, whereCursor, multiWhereFieldsMap, multiSelectFieldsMap);
+    public Condition getWhereConditions(JoinSetup joinSetup, String templateId, int whereCursor, MultiFieldsMap multiWhereFieldsMap, MultiFieldsMap multiSelectFieldsMap) throws UnknownVariableException {
+       Condition condition = whereBinder.bind(joinSetup, templateId, whereCursor, multiWhereFieldsMap, multiSelectFieldsMap);
+       explicitEhrIdCondition = whereBinder.getExplicitEhrIdCondition();
+       return condition;
     }
 
    public CompositionAttributeQuery getCompositionAttributeQuery() {
         return compositionAttributeQuery;
     }
 
-   private void encodeForLateral(String className, String templateId, I_VariableDefinition variableDefinition, MultiFields multiFields){
+   private void encodeForLateral(String className, String templateId, I_VariableDefinition variableDefinition, MultiFields multiFields) throws UnknownVariableException {
         for (Iterator<QualifiedAqlField> it = multiFields.iterator(); it.hasNext(); ) {
             QualifiedAqlField qualifiedAqlField = it.next();
             Field sqlField = qualifiedAqlField.getSQLField();
@@ -137,7 +142,11 @@ public class SelectBinder extends TemplateMetaData implements ISelectBinder {
                 MultiFields unaliasedFields = new ExpressionField(variableDefinition, jsonbEntryQuery, compositionAttributeQuery).toSql(className, templateId, variableDefinition.getIdentifier(), IQueryImpl.Clause.WHERE);
 
                 TaggedStringBuilder taggedStringBuilder = new TaggedStringBuilder();
-                taggedStringBuilder.append(unaliasedFields.getLastQualifiedField().getSQLField().toString());
+                try {
+                    taggedStringBuilder.append(unaliasedFields.getLastQualifiedField().getSQLField().toString());
+                } catch (UnknownVariableException e){
+                    continue;
+                }
                 new LateralJoins().create(templateId, taggedStringBuilder, variableDefinition, SELECT);
 
                 //substitute the field to use the lateral join with the same alias!
@@ -154,4 +163,7 @@ public class SelectBinder extends TemplateMetaData implements ISelectBinder {
         }
     }
 
+    public EhrIdCondition getExplicitEhrIdCondition() {
+        return explicitEhrIdCondition;
+    }
 }

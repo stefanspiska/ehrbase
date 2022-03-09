@@ -357,7 +357,7 @@ public class CompositionAccess extends DataAccess implements I_CompositionAccess
             contextAccess = I_ContextAccess.getInstance(this, context);
             contextAccess.commit(transactionTime);
         } else
-            contextAccess = I_ContextAccess.retrieveInstance(this, contextId.get());
+            contextAccess = I_ContextAccess.retrieveInstance(this, contextId.get(), getEhrid());
 
         var newEventContext = composition.getContext();
 
@@ -847,7 +847,7 @@ public class CompositionAccess extends DataAccess implements I_CompositionAccess
      */
     @Override
     public void setContextCompositionId(UUID contextId) {
-        I_ContextAccess contextAccess = I_ContextAccess.retrieveInstance(this, contextId);
+        I_ContextAccess contextAccess = I_ContextAccess.retrieveInstance(this, contextId, getEhrid());
         contextAccess.setCompositionId(compositionRecord.getId());
         contextAccess.setEhrId(compositionRecord.getEhrId());
         contextAccess.update(TransactionTime.millis());

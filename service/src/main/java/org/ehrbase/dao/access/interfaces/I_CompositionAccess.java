@@ -96,6 +96,7 @@ public interface I_CompositionAccess extends I_VersionedCRUD {
     String F_CONTEXT_LOCATION = "context_location";
     String F_CONTEXT_SETTING = "context_setting";
     String F_CONTEXT_OTHER_CONTEXT = "context_other_context";
+    String F_CONTEXT_EHR_ID = "context_ehr_id";
     String F_FACILITY_NAME = "facility_name";
     String F_FACILITY_REF_VALUE = "facility_ref_value";
     String F_FACILITY_REF_SCHEME = "facility_ref_scheme";
@@ -198,8 +199,8 @@ public interface I_CompositionAccess extends I_VersionedCRUD {
      * @param id           a composition uuid
      * @return a valid {@link I_CompositionAccess}
      */
-    static I_CompositionAccess retrieveInstance(I_DomainAccess domainAccess, UUID id) {
-        return CompositionAccess.retrieveInstance(domainAccess, id);
+    static I_CompositionAccess retrieveInstance(I_DomainAccess domainAccess, UUID ehr_id, UUID id) {
+        return CompositionAccess.retrieveInstance(domainAccess, ehr_id, id);
     }
 
     /**

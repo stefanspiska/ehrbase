@@ -127,7 +127,7 @@ public class JsonbEntryQuery extends ObjectQuery implements IQueryImpl {
     }
 
     @Override
-    public MultiFields makeField(String templateId, String identifier, I_VariableDefinition variableDefinition, Clause clause) {
+    public MultiFields makeField(String templateId, String identifier, I_VariableDefinition variableDefinition, Clause clause) throws UnknownVariableException {
         boolean setReturningFunctionInWhere = false; //if true, use a subselect
         boolean isRootContent = false; //that is a query path on a full composition starting from the root content
         DataType castTypeAs = null;
@@ -145,7 +145,8 @@ public class JsonbEntryQuery extends ObjectQuery implements IQueryImpl {
         String alias = clause.equals(Clause.WHERE) ? null : variableDefinition.getAlias();
 
         if (pathSet == null || pathSet.isEmpty()) {
-            return MultiFields.asNull(variableDefinition, templateId, clause);
+            throw new UnknownVariableException(variableDefinition.getPath());
+//            return MultiFields.asNull(variableDefinition, templateId, clause);
         }
 
         //traverse the set of paths and create the corresponding fields

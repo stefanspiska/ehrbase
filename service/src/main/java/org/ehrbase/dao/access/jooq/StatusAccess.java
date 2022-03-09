@@ -227,8 +227,8 @@ public class StatusAccess extends DataAccess implements I_StatusAccess {
         setContributionId(contributionId);
     }
 
-    public static I_StatusAccess retrieveInstance(I_DomainAccess domainAccess, UUID statusId) {
-        StatusRecord record = domainAccess.getContext().fetchOne(STATUS, STATUS.ID.eq(statusId));
+    public static I_StatusAccess retrieveInstance(I_DomainAccess domainAccess, UUID ehrId, UUID statusId) {
+        StatusRecord record = domainAccess.getContext().fetchOne(STATUS, STATUS.ID.eq(statusId).and(STATUS.EHR_ID.eq(ehrId)));
 
         if (record == null)
             return null;
@@ -520,8 +520,9 @@ public class StatusAccess extends DataAccess implements I_StatusAccess {
     @SuppressWarnings("rawtypes")   // `result` is raw so later iterating also gets the version number
     public int getEhrStatusVersionFromTimeStamp(Timestamp time) {
         UUID statusUid = this.statusRecord.getId();
+        UUID ehrId = this.statusRecord.getEhrId();
         // retrieve current version from status tables
-        I_StatusAccess retStatusAccess = I_StatusAccess.retrieveInstance(this.getDataAccess(), statusUid);
+        I_StatusAccess retStatusAccess = I_StatusAccess.retrieveInstance(this.getDataAccess(), ehrId, statusUid);
 
         // retrieve all other versions from status_history and sort by time
         Result result = getDataAccess().getContext().selectFrom(STATUS_HISTORY)

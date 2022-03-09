@@ -46,8 +46,8 @@ public interface I_StatusAccess extends I_VersionedCRUD {
      * @param statusId      Id of an status to retrieve
      * @return UUID or null
      */
-    static I_StatusAccess retrieveInstance(I_DomainAccess domainAccess, UUID statusId) {
-        return StatusAccess.retrieveInstance(domainAccess, statusId);
+    static I_StatusAccess retrieveInstance(I_DomainAccess domainAccess, UUID ehrId, UUID statusId) {
+        return StatusAccess.retrieveInstance(domainAccess, ehrId, statusId);
     }
 
     /**

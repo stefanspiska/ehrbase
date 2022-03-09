@@ -20,6 +20,7 @@
 package org.ehrbase.aql.sql.queryimpl.translator.testcase.pg10.pgsql;
 
 import org.ehrbase.aql.sql.queryimpl.QueryImplConstants;
+import org.ehrbase.aql.sql.queryimpl.UnknownVariableException;
 import org.ehrbase.aql.sql.queryimpl.translator.testcase.UC32;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -41,7 +42,7 @@ public class UC32Test extends UC32 {
     }
 
     @Test
-    public void testIt(){
+    public void testIt()  {
         assertThat(testAqlSelectQuery()).isTrue();
     }
 }

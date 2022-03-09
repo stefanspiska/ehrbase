@@ -236,7 +236,7 @@ public class EhrAccess extends DataAccess implements I_EhrAccess {
         EhrRecord record;
 
         // necessary anyway, but if no version is provided assume latest version (otherwise this one will be overwritten with wanted one)
-        I_StatusAccess statusAccess = I_StatusAccess.retrieveInstance(domainAccess, status);
+        I_StatusAccess statusAccess = I_StatusAccess.retrieveInstance(domainAccess, ehrId, status);
         ehrAccess.setStatusAccess(statusAccess);
 
         // first step of retrieving a particular version is to query for the amount of versions, which depends on the latest one above

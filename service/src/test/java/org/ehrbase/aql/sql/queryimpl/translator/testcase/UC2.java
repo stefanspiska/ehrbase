@@ -25,7 +25,7 @@ public abstract class UC2 extends QueryProcessorTestBase {
 
     protected UC2(){
         this.aql = "select e/ehr_id/value from EHR e " +
-                "where e/ehr_id/value = '30580007' ";
+                "where e/ehr_id/value = '431aba44-8e13-4b1b-a235-230bfdc58ade' ";
         this.expectedOutputWithJson = false;
     }
 }

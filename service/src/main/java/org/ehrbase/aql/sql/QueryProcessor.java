@@ -106,6 +106,7 @@ public class QueryProcessor extends TemplateMetaData {
 
 
     public AqlResult execute() {
+
         AqlSelectQuery aqlSelectQuery = buildAqlSelectQuery();
 
         Result<Record> result = fetchResultSet(aqlSelectQuery.getSelectQuery(), null);
@@ -117,9 +118,10 @@ public class QueryProcessor extends TemplateMetaData {
         List<List<String>> explainList = buildExplain(aqlSelectQuery.getSelectQuery());
 
         return new AqlResult(result, explainList);
+
     }
 
-    public AqlSelectQuery buildAqlSelectQuery() {
+    public AqlSelectQuery buildAqlSelectQuery()  {
 
         Map<String, List<QuerySteps>> cacheQuery = new HashMap<>();
 
@@ -127,15 +129,32 @@ public class QueryProcessor extends TemplateMetaData {
 
         statements = new OrderByField(statements).merge();
 
+        List<QuerySteps> querySteps;
+
         if (contains.getTemplates().isEmpty()) {
             if (contains.hasContains() && contains.requiresTemplateWhereClause()) {
-                cacheQuery.put(NIL_TEMPLATE, buildNullSelect(NIL_TEMPLATE));
-                containsJson = false;
+                try {
+                    querySteps = buildNullSelect(NIL_TEMPLATE);
+                    cacheQuery.put(NIL_TEMPLATE, querySteps);
+                    containsJson = false;
+                } catch (UnknownVariableException e){
+                    //do nothing
+                }
             } else
-                cacheQuery.put(NIL_TEMPLATE, buildQuerySteps(NIL_TEMPLATE));
+                try {
+                    querySteps = buildQuerySteps(NIL_TEMPLATE);
+                    cacheQuery.put(NIL_TEMPLATE, querySteps);
+                } catch (UnknownVariableException e){
+                    //do nothing
+                }
         } else {
             for (String templateId : contains.getTemplates()) {
-                cacheQuery.put(templateId, buildQuerySteps(templateId));
+                try {
+                    querySteps = buildQuerySteps(templateId);
+                    cacheQuery.put(templateId, querySteps);
+                } catch (UnknownVariableException e){
+                    //ignore
+                }
             }
         }
 
@@ -203,7 +222,7 @@ public class QueryProcessor extends TemplateMetaData {
         return new AqlSelectQuery(unionSetQuery, cacheQuery.values(), containsJson);
     }
 
-    private List<QuerySteps> buildQuerySteps(String templateId) {
+    private List<QuerySteps> buildQuerySteps(String templateId) throws UnknownVariableException {
 
         List<QuerySteps> queryStepsList = new ArrayList<>();
 
@@ -237,13 +256,17 @@ public class QueryProcessor extends TemplateMetaData {
                 //iterate on paths for the variable
                 for (Iterator<MultiFields> it = multiSelectFieldsMap.multiFieldsIterator(); it.hasNext(); ) {
                     MultiFields multiSelectFields = it.next();
+
                     select.addSelect(multiSelectFields.getQualifiedFieldOrLast(selectCursor).getSQLField());
+
                 }
 
-                Condition condition = selectBinder.getWhereConditions(templateId, whereCursor, multiWhereFieldsMap, multiSelectFieldsMap);
+                Condition condition = selectBinder.getWhereConditions(joinSetup, templateId, whereCursor, multiWhereFieldsMap, multiSelectFieldsMap);
                 if (condition != null && condition.equals(DSL.falseCondition()))
                     break; //do not add since it is always false
 
+
+                //evaluate the lateral JOINs (table joins are processed later)
                 List<LateralJoinDefinition> joins = new ArrayList<>();
 
                 joins.addAll(lateralJoinsSelectClause(NIL_TEMPLATE, 0)); //composition attributes
@@ -259,6 +282,7 @@ public class QueryProcessor extends TemplateMetaData {
                         joins,
                         templateId
                 );
+                querySteps.setExplicitEhrIdCondition(selectBinder.getExplicitEhrIdCondition());
                 if (QuerySteps.isIncludedInList(querySteps, queryStepsList)) {
                     //re-initialize select
                     selectCursor++;
@@ -389,7 +413,7 @@ public class QueryProcessor extends TemplateMetaData {
         return explainList;
     }
 
-    private List<QuerySteps> buildNullSelect(String templateId) {
+    private List<QuerySteps> buildNullSelect(String templateId) throws UnknownVariableException {
 
         List<QuerySteps> queryStepsList = buildQuerySteps(templateId);
 
