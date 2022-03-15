@@ -1,13 +1,11 @@
 /*
- * Copyright (c) 2019 Vitasystems GmbH and Jake Smolka (Hannover Medical School).
- *
- * This file is part of project EHRbase
+ * Copyright 2019-2022 vitasystems GmbH and Hannover Medical School.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,20 +25,30 @@ import org.ehrbase.api.exception.UnexpectedSwitchCaseException;
 import org.ehrbase.response.ehrscape.CompositionFormat;
 import org.ehrbase.serialisation.jsonencoding.CanonicalJson;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Helper class to collect helper methods for contribution processing.
+ *
+ * @author Jake Smolka
+ * @since 1.0
  */
 public class ContributionServiceHelper {
 
+    private ContributionServiceHelper() {
+    }
+
     /**
      * splits contribution string content into its versions list & audit part
+     *
      * @param content Payload serialized input
-     * @param format Format of given input
+     * @param format  Format of given input
      * @return Map split at first level of input, so access to the version list and audit is directly possible
      */
-    static public Map<String, Object> splitContent(String content, CompositionFormat format) {
+    public static Map<String, Object> splitContent(String content, CompositionFormat format) {
         switch (format) {
             case JSON:
                 return new CanonicalJson().unmarshalToMap(content);
@@ -53,23 +61,24 @@ public class ContributionServiceHelper {
 
     /**
      * returns a list of RM VERSIONs extracted from given serialization
-     * @param listVersions List of still serialized version objects
-     * @param format Format of the serialization
+     *
+     * @param versions List of still serialized version objects
+     * @param format   Format of the serialization
      * @return List of deserialized version objects
      * @throws IllegalArgumentException when processing of given input fails
      */
-    public static List<Version> extractVersionObjects(ArrayList listVersions, CompositionFormat format) {
-        List<Version> versionsList = new LinkedList<>();
+    public static List<Version> extractVersionObjects(List<?> versions, CompositionFormat format) {
+        List<Version> result = new LinkedList<>();
 
         switch (format) {
             case JSON:
-                for (Object version : listVersions) {
+                for (Object version : versions) {
                     try {
                         // TODO CONTRIBUTION: round trip ((string->)object->string->object) really necessary?
                         String json = JacksonUtil.getObjectMapper().writeValueAsString(version);
                         RMObject versionRmObject = new CanonicalJson().unmarshal(json, RMObject.class);
                         if (versionRmObject instanceof Version) {
-                            versionsList.add((Version) versionRmObject);
+                            result.add((Version) versionRmObject);
                         } else {
                             throw new IllegalArgumentException("Wrong input. At least one VERSION in this contribution is invalid.");
                         }
@@ -83,17 +92,19 @@ public class ContributionServiceHelper {
                 throw new UnexpectedSwitchCaseException(format);
         }
 
-        return versionsList;
+        return result;
     }
 
-    /** TODO CONTRIBUTION: isn't this in its current form independent of the format? the map should be <string, object> without JSON specifics. only the problematic round trip conversation depends of a format, but that could be fix.
+    /**
+     * TODO CONTRIBUTION: isn't this in its current form independent of the format? the map should be <string, object> without JSON specifics. only the problematic round trip conversation depends of a format, but that could be fix.
      * unmarshaller that creates an RMObject from a Map's content
+     *
      * @param content Map instance containing data for a RMObject (i.e. pseudo marshalled)
-     * @param format Format of the origin payload // TODO technically given content doesn't contain any (real) marshalled, for instance, json parts anymore
+     * @param format  Format of the origin payload // TODO technically given content doesn't contain any (real) marshalled, for instance, json parts anymore
      * @return RM Object representation fitting the given content
      * @throws IllegalArgumentException when processing of given input fails
      */
-    public static RMObject unmarshalMapContentToRmObject(LinkedHashMap content, CompositionFormat format) {
+    public static RMObject unmarshalMapContentToRmObject(Map<?, ?> content, CompositionFormat format) {
         switch (format) {
             case JSON:
                 String json = null;
@@ -111,8 +122,9 @@ public class ContributionServiceHelper {
 
     /**
      * Convenience helper that combines some methods from above and prepares direct access to the list of contained versions
+     *
      * @param content Plain string content
-     * @param format Format of content
+     * @param format  Format of content
      * @return List of version objects extracted from content
      */
     public static List<Version> parseVersions(String content, CompositionFormat format) {
@@ -120,11 +132,11 @@ public class ContributionServiceHelper {
         Map<String, Object> splitContent = splitContent(content, format);
 
         // process versions: unmarshal to some iterable object & create RM objects out of input
-        List<Version> versions = null;
+        List<Version> versions;
 
         Object versionsContent = splitContent.get("versions");
         if (versionsContent instanceof List) {
-            versions = extractVersionObjects((ArrayList) versionsContent, format);
+            versions = extractVersionObjects((ArrayList<?>) versionsContent, format);
         } else {
             throw new IllegalArgumentException("Can't process input, possible malformed version payload");
         }
@@ -133,8 +145,9 @@ public class ContributionServiceHelper {
 
     /**
      * Helper that parses the AuditDetails from the contribution input.
+     *
      * @param content Plain string content
-     * @param format Format of content
+     * @param format  Format of content
      * @return AuditDetails object
      */
     public static AuditDetails parseAuditDetails(String content, CompositionFormat format) {

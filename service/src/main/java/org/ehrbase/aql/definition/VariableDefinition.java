@@ -1,16 +1,11 @@
 /*
- * Modifications copyright (C) 2019 Christian Chevalley, Vitasystems GmbH and Hannover Medical School
-
- * This file is part of Project EHRbase
-
- * Copyright (c) 2015 Christian Chevalley
- * This file is part of Project Ethercis
+ * Copyright 2016-2022 vitasystems GmbH and Hannover Medical School.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,11 +18,19 @@ package org.ehrbase.aql.definition;
 
 import org.jooq.DataType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
- * Container of a variable (symbol) with its path and alias (AS 'alias')
- * Created by christian on 5/3/2016.
+ * Container of a variable (symbol) with its path and alias (AS 'alias').
+ *
+ * @author Christian Chevalley
+ * @since 1.0
  */
 public class VariableDefinition implements I_VariableDefinition {
 
@@ -61,6 +64,7 @@ public class VariableDefinition implements I_VariableDefinition {
 
     /**
      * used whenever a variable is added for technical reason (f.e. a order by field not present in the select clause)
+     *
      * @param path
      * @param alias
      * @param identifier
@@ -120,16 +124,15 @@ public class VariableDefinition implements I_VariableDefinition {
 
     @Override
     public int getLateralJoinsSize(String templateId) {
-        if (isLateralJoinsEmpty(templateId))
+        if (isLateralJoinsEmpty(templateId)) {
             return 0;
+        }
         return lateralJoinDefinitions.get(templateId).size();
     }
 
     @Override
     public boolean isLateralJoinsEmpty(String templateId) {
-        if (lateralJoinDefinitions.isEmpty() || lateralJoinDefinitions.get(templateId) == null || lateralJoinDefinitions.get(templateId).isEmpty())
-            return true;
-        return false;
+        return lateralJoinDefinitions.isEmpty() || lateralJoinDefinitions.get(templateId) == null || lateralJoinDefinitions.get(templateId).isEmpty();
     }
 
 
@@ -175,7 +178,7 @@ public class VariableDefinition implements I_VariableDefinition {
     }
 
     @Override
-    public void setPath(String path){
+    public void setPath(String path) {
         this.path = path;
     }
 
@@ -190,7 +193,7 @@ public class VariableDefinition implements I_VariableDefinition {
     }
 
     @Override
-    public I_VariableDefinition duplicate(){
+    public I_VariableDefinition duplicate() {
         return new VariableDefinition(this.path, this.alias, this.identifier, this.isDistinct, this.isHidden);
     }
 
@@ -211,11 +214,11 @@ public class VariableDefinition implements I_VariableDefinition {
         this.substituteFieldVariable = substituteFieldVariable;
     }
 
-    public void setSelectType(DataType sqlDataType){
+    public void setSelectType(DataType sqlDataType) {
         this.selectDataType = sqlDataType;
     }
 
-    public DataType getSelectType(){
+    public DataType getSelectType() {
         return this.selectDataType;
     }
 

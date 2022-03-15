@@ -1,13 +1,11 @@
 /*
- * Copyright (c) 2020 Vitasystems GmbH and Christian Chevalley (Hannover Medical School).
- *
- * This file is part of project EHRbase
+ * Copyright 2020-2022 vitasystems GmbH and Hannover Medical School.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,30 +22,35 @@ import org.ehrbase.dao.access.interfaces.I_DomainAccess;
 import java.util.UUID;
 
 /**
- * Abstract class for PartyProxy DB operations
+ * Abstract class for PartyProxy DB operations.
+ *
+ * @author Christian Chevalley
+ * @since 1.0
  */
-public abstract class PersistedParty implements I_PersistedParty{
+public abstract class PersistedParty implements I_PersistedParty {
 
-    I_DomainAccess domainAccess;
+    protected I_DomainAccess domainAccess;
 
-    public PersistedParty(I_DomainAccess domainAccess) {
+    protected PersistedParty(I_DomainAccess domainAccess) {
         this.domainAccess = domainAccess;
     }
 
     @Override
-    public UUID findInDB(PartyProxy partyProxy){return null;}
+    public UUID findInDB(PartyProxy partyProxy) {
+        return null;
+    }
 
     @Override
-    public UUID store(PartyProxy partyProxy){return null;}
+    public UUID store(PartyProxy partyProxy) {
+        return null;
+    }
 
     @Override
     public UUID getOrCreate(PartyProxy partyProxy) {
-
         UUID uuid = findInDB(partyProxy);
-
-        if (uuid == null)
+        if (uuid == null) {
             uuid = store(partyProxy);
-
+        }
         return uuid;
     }
 }

@@ -1,13 +1,11 @@
 /*
- * Copyright (c) 2019 Vitasystems GmbH and Hannover Medical School.
- *
- * This file is part of project EHRbase
+ * Copyright 2019-2022 vitasystems GmbH and Hannover Medical School.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,18 +20,23 @@ import org.ehrbase.dao.access.interfaces.I_DomainAccess;
 import org.ehrbase.ehr.util.LocatableHelper;
 import org.ehrbase.service.IntrospectService;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import static org.ehrbase.aql.sql.queryimpl.EntryAttributeMapper.OTHER_PARTICIPATIONS;
 import static org.ehrbase.aql.sql.queryimpl.IterativeNodeConstants.ENV_AQL_ARRAY_DEPTH;
 import static org.ehrbase.aql.sql.queryimpl.IterativeNodeConstants.ENV_AQL_ARRAY_IGNORE_NODE;
 import static org.ehrbase.aql.sql.queryimpl.QueryImplConstants.AQL_NODE_ITERATIVE_MARKER;
 
 /**
- * Created by christian on 5/9/2018.
+ * @author Christian Chevalley
+ * @since 1.0
  */
-@SuppressWarnings({"java:S3776","java:S3740","java:S1452","java:S1075","java:S135"})
+@SuppressWarnings({"java:S3776", "java:S3740", "java:S1452", "java:S1075", "java:S135"})
 public class IterativeNode implements IIterativeNode {
 
     private List<String> ignoreIterativeNode; //f.e. '/content' '/events' etc.
@@ -48,13 +51,12 @@ public class IterativeNode implements IIterativeNode {
     }
 
     /**
-     * check if node at path is iterative (max > 1)
+     * Check if node at path is iterative (max > 1).
      *
      * @param segmentedPath
      * @return
      */
     public Integer[] iterativeAt(List<String> segmentedPath) {
-
         SortedSet<Integer> retarray = new TreeSet<>();
 
         if (unbounded.isEmpty()) {
@@ -178,20 +180,18 @@ public class IterativeNode implements IIterativeNode {
         return retval;
     }
 
-    private void initAqlRuntimeParameters(){
+    private void initAqlRuntimeParameters() {
         ignoreIterativeNode = new ArrayList<>();
         if (System.getenv(ENV_AQL_ARRAY_IGNORE_NODE) != null) {
             ignoreIterativeNode = Arrays.asList(System.getenv(ENV_AQL_ARRAY_IGNORE_NODE).split(","));
-        } else if (domainAccess.getServerConfig().getAqlIterationSkipList() != null && !domainAccess.getServerConfig().getAqlIterationSkipList().isBlank()){
+        } else if (domainAccess.getServerConfig().getAqlIterationSkipList() != null && !domainAccess.getServerConfig().getAqlIterationSkipList().isBlank()) {
             ignoreIterativeNode.addAll(Arrays.asList(domainAccess.getServerConfig().getAqlIterationSkipList().split(",")));
-        }
-        else
+        } else
             ignoreIterativeNode = Arrays.asList("^/content.*", "^/events.*");
 
         if (System.getenv(ENV_AQL_ARRAY_DEPTH) != null) {
             depth = Integer.parseInt(System.getenv(ENV_AQL_ARRAY_DEPTH));
-        }
-        else if (domainAccess.getServerConfig().getAqlDepth() != null)
+        } else if (domainAccess.getServerConfig().getAqlDepth() != null)
             depth = domainAccess.getServerConfig().getAqlDepth();
         else
             depth = 1;
@@ -201,22 +201,22 @@ public class IterativeNode implements IIterativeNode {
         List<String> resultingPath = new ArrayList<>();
 
         for (String node : itemPathArray) {
-            if (node.contains("feeder_system_item_ids")){
+            if (node.contains("feeder_system_item_ids")) {
                 List<String> faItems = Arrays.asList(node.split(",").clone());
-                if (faItems.size() > 2){
+                if (faItems.size() > 2) {
                     //insert a iterative marker for function resolution
-                    for (String faNode: faItems) {
+                    for (String faNode : faItems) {
                         resultingPath.add(faNode);
-                        if (faNode.equals("feeder_system_item_ids")){
+                        if (faNode.equals("feeder_system_item_ids")) {
                             resultingPath.add(AQL_NODE_ITERATIVE_MARKER);
                         }
                     }
-                }
-                else
+                } else {
                     resultingPath.add(node);
-            }
-            else
+                }
+            } else {
                 resultingPath.add(node);
+            }
         }
         return resultingPath;
     }

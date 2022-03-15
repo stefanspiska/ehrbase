@@ -113,21 +113,18 @@ public class FhirTerminologyServerR4AdaptorImpl implements I_OpenehrTerminologyS
 
     @Override
     public DvCodedText lookUp(final String conceptId) {
-        // TODO Auto-generated method stub
         return null;
 
     }
 
     @Override
     public Boolean validate(final DvCodedText concept, final String valueSetId) {
-        // TODO Auto-generated method stub
         logger.debug("inside the validate method of R4 implementation");
         return false;
     }
 
     @Override
     public SubsumptionResult subsumes(final DvCodedText conceptA, final DvCodedText conceptB) {
-        // TODO Auto-generated method stub
         return null;
     }
 

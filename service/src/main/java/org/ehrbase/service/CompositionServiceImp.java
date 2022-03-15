@@ -428,21 +428,6 @@ public class CompositionServiceImp extends BaseServiceImp implements Composition
     return getCompositionDto(compositionAccess);
   }
 
-  // TODO: untested because not needed, yet
-  @Override
-  public Optional<CompositionDto> retrieveByTimestamp(UUID compositionId, LocalDateTime timestamp) {
-    I_CompositionAccess compositionAccess;
-    try {
-      compositionAccess =
-          I_CompositionAccess.retrieveInstanceByTimestamp(
-              getDataAccess(), compositionId, Timestamp.valueOf(timestamp));
-    } catch (Exception e) {
-      throw new InternalServerException(e);
-    }
-
-    return getCompositionDto(compositionAccess);
-  }
-
   // Helper function to create returnable DTO
   private Optional<CompositionDto> getCompositionDto(I_CompositionAccess compositionAccess) {
     if (compositionAccess == null) {

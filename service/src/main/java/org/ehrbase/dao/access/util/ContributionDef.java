@@ -1,16 +1,11 @@
 /*
- * Modifications copyright (C) 2019 Christian Chevalley, Vitasystems GmbH and Hannover Medical School.
-
- * This file is part of Project EHRbase
-
- * Copyright (c) 2015 Christian Chevalley
- * This file is part of Project Ethercis
+ * Copyright 2015-2022 vitasystems GmbH and Hannover Medical School.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,11 +16,15 @@
 package org.ehrbase.dao.access.util;
 
 /**
- * Created by Christian Chevalley on 4/22/2015.
+ * @author Christian Chevalley
+ * @since 1.0
  */
 public class ContributionDef {
 
-    public static enum ContributionType {
+    private ContributionDef() {
+    }
+
+    public enum ContributionType {
 
         COMPOSITION("composition"),
         FOLDER("folder");
@@ -39,10 +38,9 @@ public class ContributionDef {
         public String getLiteral() {
             return literal;
         }
-
     }
 
-    public static enum ContributionState {
+    public enum ContributionState {
 
         COMPLETE("complete"),
         INCOMPLETE("incomplete"),
@@ -59,5 +57,4 @@ public class ContributionDef {
             return literal;
         }
     }
-
 }

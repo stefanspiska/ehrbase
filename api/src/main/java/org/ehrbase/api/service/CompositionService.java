@@ -1,13 +1,11 @@
 /*
- * Copyright (c) 2019 Stefan Spiska (Vitasystems GmbH), Jake Smolka (Hannover Medical School), and Luis Marco-Ruiz (Hannover Medical School).
- *
- * This file is part of project EHRbase
+ * Copyright 2019-2022 vitasystems GmbH and Hannover Medical School.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,7 +20,6 @@ import com.nedap.archie.rm.changecontrol.OriginalVersion;
 import com.nedap.archie.rm.composition.Composition;
 import com.nedap.archie.rm.ehr.VersionedComposition;
 import com.nedap.archie.rm.generic.RevisionHistory;
-import org.ehrbase.api.exception.InternalServerException;
 import org.ehrbase.api.exception.ObjectNotFoundException;
 import org.ehrbase.response.ehrscape.CompositionDto;
 import org.ehrbase.response.ehrscape.CompositionFormat;
@@ -32,25 +29,22 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Composition service interface.
+ *
+ * @author Stefan Spiska
+ * @author Jake Smolka
+ * @author Luis Marco-Ruiz
+ * @since 1.0
+ */
 public interface CompositionService extends BaseService, VersionedObjectService<Composition, CompositionDto> {
+
     /**
      * @param compositionId The {@link UUID} of the composition to be returned.
      * @param version       The version to returned. If null return the latest
-     * @return
-     * @throws InternalServerException
+     * @return the composition with the given compositionId and version or {@literal Optional#empty()} if none found.
      */
     Optional<CompositionDto> retrieve(UUID compositionId, Integer version);
-
-    /**
-     * TODO: untested because not needed, yet
-     *
-     * Gets the composition that is closest in time before timestamp
-     *
-     * @param compositionId UUID (versioned_object_id) of composition
-     * @param timestamp Given time
-     * @return Optional of CompositionDto closest in time before timestamp
-     */
-    Optional<CompositionDto> retrieveByTimestamp(UUID compositionId, LocalDateTime timestamp);
 
     /**
      * Public serializer entry point which will be called with
@@ -69,30 +63,34 @@ public interface CompositionService extends BaseService, VersionedObjectService<
 
     /**
      * Helper function to read UUID from given composition input in stated format.
+     *
      * @param content Composition input
-     * @param format Composition format
+     * @param format  Composition format
      * @return The UUID or null when not available.
      */
     String getUidFromInputComposition(String content, CompositionFormat format);
 
     /**
      * Helper function to read the template ID from given composition input in stated format.
+     *
      * @param content Composition input
-     * @param format Composition format
+     * @param format  Composition format
      * @return The UUID or null when not available.
      */
     String getTemplateIdFromInputComposition(String content, CompositionFormat format);
 
     /**
      * Gets the version of a composition that is closest in time before timestamp
+     *
      * @param compositionId UUID (versioned_object_id) of composition
-     * @param timestamp Given time
+     * @param timestamp     Given time
      * @return Version closest in time before given timestamp, or `null` in case of error.
      */
     Integer getVersionByTimestamp(UUID compositionId, LocalDateTime timestamp);
 
     /**
      * Checks if given ID is a valid composition ID.
+     *
      * @param versionedObjectId ID to check
      * @return True if ID exists
      * @throws ObjectNotFoundException if ID does not exist
@@ -101,6 +99,7 @@ public interface CompositionService extends BaseService, VersionedObjectService<
 
     /**
      * Checks if given composition ID is ID of a logically deleted composition.
+     *
      * @param versionedObjectId ID to check
      * @return True if deleted, false if not
      */
@@ -108,13 +107,15 @@ public interface CompositionService extends BaseService, VersionedObjectService<
 
     /**
      * Admin method to delete a Composition from the DB. See EHRbase Admin API specification for details.
+     *
      * @param compositionId Composition to delete
      */
     void adminDelete(UUID compositionId);
 
     /**
      * Gets version container Composition associated with given EHR and Composition ID.
-     * @param ehrUid Given EHR ID
+     *
+     * @param ehrUid      Given EHR ID
      * @param composition Given Composition ID
      * @return Version container object
      */
@@ -122,6 +123,7 @@ public interface CompositionService extends BaseService, VersionedObjectService<
 
     /**
      * Gets revision history of given composition.
+     *
      * @param composition Given composition.
      * @return Revision history
      */
@@ -129,8 +131,9 @@ public interface CompositionService extends BaseService, VersionedObjectService<
 
     /**
      * Gets Original Version container class representation of the given composition at given version.
+     *
      * @param versionedObjectUid Given composition Uid.
-     * @param version Given version number.
+     * @param version            Given version number.
      * @return Original Version container class representation.
      */
     Optional<OriginalVersion<Composition>> getOriginalVersionComposition(UUID versionedObjectUid, int version);
