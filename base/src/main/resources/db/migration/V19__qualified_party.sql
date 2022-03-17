@@ -3,21 +3,21 @@
 -- create an enum type to qualify parties
 create type ehr.party_type as enum('party_identified', 'party_self', 'party_related');
 
--- UDT for CODE_PHRASE
-create type ehr.code_phrase as  (
-  terminology_id_value text,
-  code_string text
-  );
-
--- UDT for DV_CODED_TEXT
-create type ehr.dv_coded_text as (
-  value text,
-  defining_code ehr.code_phrase,
-  formatting text,
-  -- mappings: has forward usage of type!
-  language ehr.code_phrase,
-  encoding ehr.code_phrase
-  );
+-- -- UDT for CODE_PHRASE
+-- create type ehr.code_phrase as  (
+--   terminology_id_value text,
+--   code_string text
+--   );
+--
+-- -- UDT for DV_CODED_TEXT
+-- create type ehr.dv_coded_text as (
+--   value text,
+--   defining_code ehr.code_phrase,
+--   formatting text,
+--   -- mappings: has forward usage of type!
+--   language ehr.code_phrase,
+--   encoding ehr.code_phrase
+--   );
 
 -- add support of qualification (type) and relationship for party_type == party_related
 ALTER TABLE ehr.party_identified

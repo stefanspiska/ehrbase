@@ -17,5 +17,7 @@
  *
  */
 
-CREATE UNIQUE INDEX CONCURRENTLY territory_code_index ON ehr.territory(code);
-CREATE INDEX CONCURRENTLY context_participation_index ON ehr.participation(event_context);
+-- CREATE UNIQUE INDEX CONCURRENTLY territory_code_index ON ehr.territory(code);
+-- CREATE INDEX CONCURRENTLY context_participation_index ON ehr.participation(event_context);
+CREATE UNIQUE INDEX territory_code_index ON ehr.territory(code);
+CREATE INDEX context_participation_index ON ehr.participation(event_context);

@@ -241,10 +241,10 @@ $$
 LANGUAGE plpgsql;
 
 -- iso_timestamp.sql
-create or replace function ehr.iso_timestamp(timestamp with time zone)
-  returns varchar as $$
-select substring(xmlelement(name x, $1)::varchar from 4 for 19)
-$$ language sql immutable;
+--create or replace function ehr.iso_timestamp(timestamp with time zone)
+--  returns varchar as $$
+--select substring(xmlelement(name x, $1)::varchar from 4 for 19)
+--$$ language sql immutable;
 
 -- json_composition_pg10.sql
 -- CTE enforces 1-to-1 entry-composition relationship since multiple entries can be

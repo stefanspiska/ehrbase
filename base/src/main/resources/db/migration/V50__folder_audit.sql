@@ -81,24 +81,24 @@ $$
 LANGUAGE plpgsql;
 
 ALTER TABLE ehr.folder
-    ADD COLUMN has_audit UUID references ehr.audit_details(id) ON DELETE CASCADE; -- has this audit_details instance
+    ADD COLUMN has_audit UUID references ehr.audit_details(id) ON DELETE CASCADE NOT NULL; -- has this audit_details instance
 
-ALTER TABLE ehr.folder
-    -- Set the type (again), to be able to call the migration function
-    ALTER COLUMN has_audit TYPE UUID
-    USING ehr.migrate_folder_audit(),
-    -- And finally set the column to NOT NULL
-    ALTER COLUMN has_audit SET NOT NULL;
-
-ALTER TABLE ehr.folder_history
-    ADD COLUMN has_audit UUID references ehr.audit_details(id) ON DELETE CASCADE; -- has this audit_details instance
+-- ALTER TABLE ehr.folder
+--     -- Set the type (again), to be able to call the migration function
+--     ALTER COLUMN has_audit TYPE UUID
+--     USING ehr.migrate_folder_audit(),
+--     -- And finally set the column to NOT NULL
+--     ALTER COLUMN has_audit SET NOT NULL;
 
 ALTER TABLE ehr.folder_history
-    -- Set the type (again), to be able to call the migration function
-    ALTER COLUMN has_audit TYPE UUID
-    USING ehr.migrate_folder_audit(),
-    -- And finally set the column to NOT NULL
-    ALTER COLUMN has_audit SET NOT NULL;
+    ADD COLUMN has_audit UUID references ehr.audit_details(id) ON DELETE CASCADE NOT NULL; -- has this audit_details instance
+
+-- ALTER TABLE ehr.folder_history
+--     -- Set the type (again), to be able to call the migration function
+--     ALTER COLUMN has_audit TYPE UUID
+--     USING ehr.migrate_folder_audit(),
+--     -- And finally set the column to NOT NULL
+--     ALTER COLUMN has_audit SET NOT NULL;
 
 -- Also modify the admin deletion of a folder function to include the new audits.
 DROP FUNCTION admin_delete_folder(uuid);

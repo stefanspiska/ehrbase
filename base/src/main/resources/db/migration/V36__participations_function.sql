@@ -27,13 +27,13 @@ END
 $$
     LANGUAGE plpgsql;
 
-ALTER TABLE ehr.participation
-    ALTER COLUMN function TYPE ehr.dv_coded_text
-        USING ehr.migrate_participation_function(function);
+-- ALTER TABLE ehr.participation
+--     ALTER COLUMN function TYPE ehr.dv_coded_text
+--         USING ehr.migrate_participation_function(function);
 
-ALTER TABLE ehr.participation_history
-    ALTER COLUMN function TYPE ehr.dv_coded_text
-        USING ehr.migrate_participation_function(function);
+-- ALTER TABLE ehr.participation_history
+--     ALTER COLUMN function TYPE ehr.dv_coded_text
+--         USING ehr.migrate_participation_function(function);
 
 -- returns an array of canonical participations
 CREATE OR REPLACE FUNCTION ehr.js_participations(event_context_id UUID)

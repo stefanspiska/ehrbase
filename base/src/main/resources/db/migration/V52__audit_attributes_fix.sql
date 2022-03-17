@@ -106,31 +106,31 @@ $$
     LANGUAGE plpgsql;
 
 -- Fix mandatory attributes with NOT NULL constraint
-ALTER TABLE ehr.audit_details
-    -- Set the type (again), to be able to call the migration function
-    ALTER COLUMN system_id TYPE UUID
-        USING ehr.migration_audit_system_id(system_id),
-    -- And finally set the column to NOT NULL
-    ALTER COLUMN system_id SET NOT NULL,
-
-    -- Set the type (again), to be able to call the migration function
-    ALTER
-        COLUMN committer TYPE UUID
-        USING ehr.migration_audit_committer(committer),
-    -- And finally set the column to NOT NULL
-    ALTER
-        COLUMN committer
-        SET NOT NULL,
-
-    -- change_type is set to NOT NULL already
-
-    -- time_committed has valid default now()
-
-    -- Set the type (again), to be able to call the migration function
-    ALTER
-        COLUMN time_committed_tzid TYPE TEXT
-        USING ehr.migration_audit_tzid(time_committed_tzid),
-    -- And finally set the column to NOT NULL
-    ALTER
-        COLUMN time_committed_tzid
-        SET NOT NULL;
+-- ALTER TABLE ehr.audit_details
+--     -- Set the type (again), to be able to call the migration function
+--     ALTER COLUMN system_id TYPE UUID
+--         USING ehr.migration_audit_system_id(system_id),
+--     -- And finally set the column to NOT NULL
+--     ALTER COLUMN system_id SET NOT NULL,
+--
+--     -- Set the type (again), to be able to call the migration function
+--     ALTER
+--         COLUMN committer TYPE UUID
+--         USING ehr.migration_audit_committer(committer),
+--     -- And finally set the column to NOT NULL
+--     ALTER
+--         COLUMN committer
+--         SET NOT NULL,
+--
+--     -- change_type is set to NOT NULL already
+--
+--     -- time_committed has valid default now()
+--
+--     -- Set the type (again), to be able to call the migration function
+--     ALTER
+--         COLUMN time_committed_tzid TYPE TEXT
+--         USING ehr.migration_audit_tzid(time_committed_tzid),
+--     -- And finally set the column to NOT NULL
+--     ALTER
+--         COLUMN time_committed_tzid
+--         SET NOT NULL;

@@ -22,8 +22,8 @@
 
 -- alter defined ehr.dv_coded_text
 -- This representation is used as a clean typed definition fails at read time (jooq 3.12)
-alter type ehr.dv_coded_text
-    add attribute term_mapping TEXT[]; -- array : match, purpose: value, terminology, code, target: terminology, code, delimited by '|'
+-- alter type ehr.dv_coded_text
+--     add attribute term_mapping TEXT[]; -- array : match, purpose: value, terminology, code, target: terminology, code, delimited by '|'
 
 
 -- prepare the table migration
@@ -48,25 +48,25 @@ $$
     LANGUAGE plpgsql;
 
 -- setting as DvCodedText
-alter table ehr.event_context drop constraint event_context_setting_fkey;
+-- alter table ehr.event_context drop constraint event_context_setting_fkey;
 
-alter table ehr.event_context
-    alter column setting type ehr.dv_coded_text
-        using ehr.migrate_concept_to_dv_coded_text(setting);
+-- alter table ehr.event_context
+--     alter column setting type ehr.dv_coded_text
+--         using ehr.migrate_concept_to_dv_coded_text(setting);
 
-alter table ehr.event_context_history
-    alter column setting type ehr.dv_coded_text
-        using ehr.migrate_concept_to_dv_coded_text(setting);
+-- alter table ehr.event_context_history
+--     alter column setting type ehr.dv_coded_text
+--         using ehr.migrate_concept_to_dv_coded_text(setting);
 
-alter table ehr.entry drop constraint entry_category_fkey;
+-- alter table ehr.entry drop constraint entry_category_fkey;
 
-alter table ehr.entry
-    alter column category type ehr.dv_coded_text
-        using ehr.migrate_concept_to_dv_coded_text(category);
-
-alter table ehr.entry_history
-    alter column category type ehr.dv_coded_text
-        using ehr.migrate_concept_to_dv_coded_text(category);
+-- alter table ehr.entry
+--     alter column category type ehr.dv_coded_text
+--         using ehr.migrate_concept_to_dv_coded_text(category);
+--
+-- alter table ehr.entry_history
+--     alter column category type ehr.dv_coded_text
+--         using ehr.migrate_concept_to_dv_coded_text(category);
 
 -- AQL service functions
 CREATE OR REPLACE FUNCTION ehr.js_dv_coded_text_inner(value TEXT, terminology_id TEXT, code_string TEXT)

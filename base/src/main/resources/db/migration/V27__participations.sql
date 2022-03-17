@@ -43,20 +43,18 @@ BEGIN
         (regexp_split_to_array(arr[3],'='))[2] as value
       from mode_split
     )
-    select (value, (terminology_id, code_string)::ehr.code_phrase,null,null,null)::ehr.dv_coded_text from dv_coded_text_attributes
+    select (value, (terminology_id, code_string)::ehr.code_phrase,null,null,null,null)::ehr.dv_coded_text from dv_coded_text_attributes
   );
 END
 $$
   LANGUAGE plpgsql;
 
 
-ALTER TABLE ehr.participation
-  ALTER COLUMN mode TYPE ehr.dv_coded_text
-  USING ehr.migrate_participation_mode(mode);
-
-ALTER TABLE ehr.participation_history
-  ALTER COLUMN mode TYPE ehr.dv_coded_text
-    USING ehr.migrate_participation_mode(mode);
+-- ALTER TABLE ehr.participation
+--   ALTER COLUMN mode TYPE ehr.dv_coded_text;
+--
+-- ALTER TABLE ehr.participation_history
+--   ALTER COLUMN mode TYPE ehr.dv_coded_text;
 
 --
 CREATE OR REPLACE FUNCTION ehr.js_code_phrase(codephrase ehr.code_phrase)
