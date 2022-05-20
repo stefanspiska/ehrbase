@@ -70,6 +70,7 @@ jobs:
           #Update sdk version latest release 
           mvn versions:update-properties  -Dincludes=org.ehrbase.openehr.sdk:*
           sdk_version=$( grep -oPm1 "(?<=<ehrbase.sdk.version>)[^<]+" "bom/pom.xml")
+          echo ${sdk_version}
           #edit changelog
           replace="0,/### Changed/{s/### Changed/### Changed \n - Upgrade openEHR_SDK to version ${sdk_version} see https:\/\/github.com\/ehrbase\/openEHR_SDK\/blob\/develop\/CHANGELOG.md/}"
           sed -i ${replace} CHANGELOG.md
