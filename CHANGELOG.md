@@ -9,6 +9,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
  ### Changed 
  ### Fixed 
 
+## [0.23.0]
+ ### Added
+ ### Changed 
+ - Upgrade openEHR_SDK to version 1.20.0-SNAPSHOT see https://github.com/ehrbase/openEHR_SDK/blob/develop/CHANGELOG.md 
+ ### Fixed 
+
 
 ## [0.22.0]
 ### Added
@@ -521,4 +527,5 @@ the next release this file will provide a proper overview.
 [0.9.0]: https://github.com/ehrbase/ehrbase/releases/tag/v0.9.0
 
 [0.22.0]: https://github.com/ehrbase/ehrbase/compare/v0.21.1...v0.22.0
-[unreleased]: https://github.com/ehrbase/ehrbase/compare/v0.22.0...HEAD
+[0.23.0]: https://github.com/ehrbase/ehrbase/compare/v0.22.0...v0.23.0
+[unreleased]: https://github.com/ehrbase/ehrbase/compare/v0.23.0...HEAD
