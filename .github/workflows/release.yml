@@ -72,7 +72,7 @@ jobs:
           sdk_version=$( grep -oPm1 "(?<=<ehrbase.sdk.version>)[^<]+" "bom/pom.xml")
           echo ${sdk_version}
           #edit changelog
-          replace="'0,/Changed/{s/Changed/Changed \n - Upgrade openEHR_SDK to version ${sdk_version} see https:\/\/github.com\/ehrbase\/openEHR_SDK\/blob\/develop\/CHANGELOG.md/}'"
+          replace="0,/Changed/{s/Changed/Changed \n - Upgrade openEHR_SDK to version ${sdk_version} see https:\/\/github.com\/ehrbase\/openEHR_SDK\/blob\/develop\/CHANGELOG.md/}"
           echo "${replace}"
           sed -i "${replace}" CHANGELOG.md
           replace="s/\[unreleased\]/\[${VERSION}\]/"
