@@ -2,16 +2,6 @@ name: build
 
 on:
   push:
-    branches:
-      - develop
-      - master
-    paths-ignore:
-      - '.circleci/**'
-      - '.docker_scripts/**'
-      - '.github/**'
-      - 'doc/**'
-      - 'tests/**'
-      - '**/*.md'
   workflow_dispatch:
 
 jobs:
